@@ -56,5 +56,6 @@ following rules apply for the duration of the engagement:
 | 9005 | TCP      | FST School Portal |
 | 4000 | TCP      | BlueOffice Report Generator |
 | 4500 | TCP      | BlueOffice ID Badge Photo Upload |
+| 5432 | TCP      | Database service |
 
 Have fun, enumerate thoroughly, and good luck.

