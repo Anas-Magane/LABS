@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Database Export</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #101820; color: #e0e1dd; margin: 2rem; }
+    table { border-collapse: collapse; width: 100%; max-width: 900px; margin: 0 auto; }
+    th, td { border: 1px solid #2c3e50; padding: 8px 12px; text-align: left; font-size: 0.9rem; }
+    th { background: #1b2733; }
+    tr:nth-child(even) { background: #17222c; }
+  </style>
+</head>
+<body>
+  <table>
+    <tr><th>ID</th><th>Name</th><th>Email</th><th>MD5 Password Hash</th></tr>
+    {% for row in rows %}
+    <tr><td>{{ row.id }}</td><td>{{ row.name }}</td><td>{{ row.email }}</td><td>{{ row.md5 }}</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

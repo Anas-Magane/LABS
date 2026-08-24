@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BlueOffice Token Portal</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eaeaea; display: flex;
+           align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .box { background: #16213e; padding: 2.5rem; border-radius: 8px; width: 360px; text-align: center; }
+    h1 { font-size: 1.4rem; margin-bottom: 1.5rem; }
+    a.btn { display: block; margin: 0.5rem 0; padding: 10px; background: #0f3460; color: #eaeaea;
+            border-radius: 4px; text-decoration: none; }
+    a.btn:hover { background: #16558f; }
+  </style>
+</head>
+<body>
+  <!-- Nabil, I verified everything carefully. Each user has a token, and every token is verified with one weak key that contains your name, four numbers, and a symbol at the end. You are the admin. Do not forget to add the WAF to our application. -->
+  <div class="box">
+    <h1>BlueOffice Token Portal</h1>
+    <a class="btn" href="/register">Register</a>
+    <a class="btn" href="/login">Login</a>
+    <a class="btn" href="/admin">Admin Panel</a>
+  </div>
+</body>
+</html>

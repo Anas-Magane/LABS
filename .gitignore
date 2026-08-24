@@ -1,0 +1,30 @@
+# Unrelated large external project living alongside this repo on disk.
+# Not part of BlueOffice Breach; has its own git history/venv and is
+# intentionally excluded from this backup.
+AI-Agent-Pentest/
+
+# Local environment file (contains this host's public IP). Keep
+# .env.example as the tracked template.
+.env
+
+# Never commit private keys / certs / credential material.
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+*.ppk
+known_hosts
+*credentials*.json
+*.crt
+*.csr
+
+# Python / misc cruft, in case any creeps in under services/scripts.
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store

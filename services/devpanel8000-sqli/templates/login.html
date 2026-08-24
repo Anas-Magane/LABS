@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BlueOffice Dev Panel - Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #1e1e2f; color: #eee; display: flex;
+           align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .box { background: #2a2a3d; padding: 2rem; border-radius: 8px; width: 320px; }
+    input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background: #6c5ce7; color: white; border: none;
+             border-radius: 4px; cursor: pointer; }
+    .error { color: #ff7675; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>BlueOffice Dev Panel</h2>
+    <form method="post" action="/login">
+      <input type="text" name="username" placeholder="Username" autocomplete="off">
+      <input type="password" name="password" placeholder="Password" autocomplete="off">
+      <button type="submit">Login</button>
+    </form>
+    <div class="error">{{ error or '' }}</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BlueOffice Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0d1b2a; color: #e0e1dd; padding: 2rem; }
+    .card { background: #1b263b; padding: 1.5rem; border-radius: 8px; max-width: 480px; margin-bottom: 1rem; }
+    input { padding: 8px; width: 70%; box-sizing: border-box; }
+    button { padding: 8px 14px; background: #415a77; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    pre { background: #0d1b2a; padding: 10px; border-radius: 4px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Welcome to the BlueOffice Dashboard</h1>
+
+  <div class="card">
+    <h3>flag0.txt</h3>
+    <pre>{{ flag }}</pre>
+  </div>
+
+  <div class="card">
+    <h3>Say hello</h3>
+    <input id="nameInput" type="text" placeholder="Enter your name" value="test">
+    <button onclick="sendWelcome()">Submit</button>
+    <pre id="welcomeResult"></pre>
+  </div>
+
+  <script>
+    // Client-side guard only - the real access control lives in your
+    // browser, not on the server.
+    if (localStorage.getItem("blueoffice_auth") !== "true") {
+      window.location.href = "/";
+    }
+
+    function sendWelcome() {
+      var name = document.getElementById('nameInput').value;
+      fetch('/welcome', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'name=' + encodeURIComponent(name)
+      })
+        .then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('welcomeResult').innerText = t; });
+    }
+  </script>
+</body>
+</html>

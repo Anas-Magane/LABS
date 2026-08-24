@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BlueOffice Dev Panel - Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #1e1e2f; color: #eee; padding: 2rem; }
+    .card { background: #2a2a3d; padding: 1.5rem; border-radius: 8px; max-width: 480px; }
+    a { color: #a29bfe; }
+  </style>
+</head>
+<body>
+  <h1>Dev Panel</h1>
+  <div class="card">
+    <p><strong>Username:</strong> {{ username }}</p>
+    <p><strong>Email:</strong> {{ email }}</p>
+    <p><a href="/logout">Logout</a></p>
+  </div>
+
+  <script>
+    // Session token issued by the legacy auth service.
+    localStorage.setItem("devpanel_token", "{{ token }}");
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# BlueOffice Breach - Challenge 4: SSH + Privilege Escalation
+# Minimal hardened-ish sshd config: password auth enabled (intended,
+# for the chakir login), direct root login disabled (root must be
+# reached only via the intentional sudo misconfiguration).
+
+Port 22
+ListenAddress 0.0.0.0
+
+PermitRootLogin no
+PasswordAuthentication yes
+PubkeyAuthentication yes
+ChallengeResponseAuthentication no
+UsePAM yes
+
+X11Forwarding no
+AllowTcpForwarding no
+PrintMotd no
+PrintLastLog no
+
+Subsystem sftp /usr/lib/openssh/sftp-server
+
+AllowUsers chakir

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BlueOffice Staff Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0d1b2a; color: #e0e1dd; display: flex;
+           align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .box { background: #1b263b; padding: 2rem; border-radius: 8px; width: 320px; }
+    input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background: #415a77; color: white; border: none;
+             border-radius: 4px; cursor: pointer; }
+    #err { color: #ff6b6b; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>BlueOffice Staff Portal</h2>
+    <input id="user" type="text" placeholder="Username" autocomplete="off">
+    <input id="pass" type="password" placeholder="Password" autocomplete="off">
+    <button onclick="doLogin()">Login</button>
+    <div id="err"></div>
+  </div>
+
+  <script>
+    // NOTE: this is a legacy login screen pending migration to the SSO
+    // backend. Authentication is currently performed client-side only.
+    function doLogin() {
+      var user = document.getElementById('user').value;
+      var password = document.getElementById('pass').value;
+
+      if (user == "admin" && password == "admin123456789876543212345678987654321234567898765432123456789") {
+        localStorage.setItem("blueoffice_auth", "true");
+        window.location.href = "/dashboard";
+      } else {
+        document.getElementById('err').innerText = "Invalid credentials";
+      }
+    }
+  </script>
+</body>
+</html>

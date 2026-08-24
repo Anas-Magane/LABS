@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Your Token</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eaeaea; display: flex;
+           align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .box { background: #16213e; padding: 2rem; border-radius: 8px; width: 480px; word-break: break-all; }
+    code { display: block; background: #0f172a; padding: 1rem; border-radius: 4px; margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Welcome, {{ username }}</h2>
+    <p>Your session token:</p>
+    <code>{{ token }}</code>
+    <p><a href="/admin" style="color:#7fdbff;">Go to Admin Panel</a></p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<jboss-web>
+   <!-- Challenge 9: security-domain intentionally left disabled so the
+      jmx-console HtmlAdaptor requires no authentication (see web.xml
+      in this same directory for the matching security-constraint
+      removal).
+      <security-domain>java:/jaas/jmx-console</security-domain>
+   -->
+</jboss-web>

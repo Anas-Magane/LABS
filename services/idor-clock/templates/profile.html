@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Profile #{{ user.id }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #101820; color: #e0e1dd;
+           display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .card { background: #1b2733; padding: 2rem; border-radius: 8px; width: 420px; }
+    h1 { font-size: 1.4rem; margin-top: 0; }
+    .field { margin: 0.6rem 0; }
+    .label { color: #9fb3c8; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>{{ user.name }}</h1>
+    <div class="field"><div class="label">Email</div>{{ user.email }}</div>
+    <div class="field"><div class="label">Description</div>{{ user.description }}</div>
+    <div class="field"><div class="label">Latest post</div>{{ user.post }}</div>
+  </div>
+</body>
+</html>

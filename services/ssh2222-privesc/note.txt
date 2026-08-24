@@ -1,0 +1,1 @@
+You need Do somethings like priv escalation to find the flag5 in this machine  the flag5 is in /root folder

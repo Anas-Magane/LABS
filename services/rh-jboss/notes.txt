@@ -1,0 +1,3 @@
+HR legacy server note:
+The recruitment portal can reach an internal API used by the HR analytics team.
+Check local host records and internal routes.

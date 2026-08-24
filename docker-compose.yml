@@ -1,0 +1,435 @@
+# =============================================================================
+# BlueOffice Breach - docker-compose.yml
+# =============================================================================
+#
+# Every vulnerable service lives in its own isolated container, on its
+# own dedicated Docker network, with no shared filesystem with the host
+# and no shared network with the other challenge containers. The
+# Oracle Cloud host only ever sees published ports - nothing else.
+#
+# Global isolation rules applied to every service below:
+#   - No `network_mode: host`.
+#   - No bind-mounts of the host filesystem (everything is baked into
+#     the image at build time via Dockerfile COPY, so there is no
+#     host directory exposed to any container at all).
+#   - No `/var/run/docker.sock` mounted anywhere.
+#   - No `privileged: true` anywhere.
+#   - Each service gets its own network -> containers cannot reach
+#     each other, so a shell obtained in one challenge cannot be used
+#     to pivot into another challenge's container.
+#   - `mem_limit` / `pids_limit` on every service so an exploited
+#     container (fork bombs, runaway processes) cannot starve the
+#     underlying Oracle Cloud VM of resources.
+#   - Non-root processes everywhere it is technically possible.
+#     sshd (challenge 4) and smbd (challenge 5) are the two structural
+#     exceptions: both daemons require root to start (to bind, and to
+#     switch UID per session/login) exactly like they would on a real
+#     server - this is what makes the SSH "main machine" privilege
+#     escalation challenge meaningful in the first place. Both still
+#     run unprivileged (no --privileged, no host mounts).
+#
+# Bring everything up with:
+#   docker compose up -d --build
+#
+# Set PUBLIC_IP (the Oracle Cloud VM's public IP) in a .env file next
+# to this compose file so passive FTP data transfers work correctly
+# from outside the host. See .env.example.
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 1 - FTP (vsFTPd 2.3.4 style backdoor)
+  # Player-facing port: 21/tcp
+  # Also exposes: 6200/tcp (the simulated backdoor bind shell - opened only
+  # after the smiley-face trigger is sent) and the passive data port range,
+  # both of which are required for the FTP exploit chain to work end to end.
+  # ---------------------------------------------------------------------------
+  ftp-challenge:
+    build:
+      context: ./services/ftp
+    image: blueoffice/ftp-challenge:latest
+    container_name: blueoffice-ftp
+    restart: unless-stopped
+    environment:
+      - FTP_PASV_ADDRESS=${PUBLIC_IP:-127.0.0.1}
+      - FTP_PASV_PORTS=21100-21110
+    ports:
+      - "21:2121"          # FTP control channel (vsFTPd 2.3.4 banner)
+      - "6200:6200"        # simulated CVE-2011-2523 backdoor bind shell
+      - "21100-21110:21100-21110"  # FTP passive data channel
+    networks:
+      - net_ftp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 2 - Web Command Injection
+  # Player-facing port: 80/tcp
+  # ---------------------------------------------------------------------------
+  web80-command-injection:
+    build:
+      context: ./services/web80-command-injection
+    image: blueoffice/web80-cmdi:latest
+    container_name: blueoffice-web80
+    restart: unless-stopped
+    ports:
+      - "80:5000"
+    networks:
+      - net_web80
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 3 - Client-Side Auth + SSTI dashboard
+  # Player-facing port: 3000/tcp
+  # ---------------------------------------------------------------------------
+  dashboard3000-ssti:
+    build:
+      context: ./services/dashboard3000-ssti
+    image: blueoffice/dashboard3000-ssti:latest
+    container_name: blueoffice-dashboard3000
+    restart: unless-stopped
+    ports:
+      - "3000:5000"
+    networks:
+      - net_dashboard3000
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 4 - SSH + Privilege Escalation (the "main machine")
+  # Player-facing port: 2222/tcp
+  # NOTE: cap_drop/no-new-privileges are intentionally NOT applied here.
+  # sudo (the intended GTFOBins privesc path) relies on its setuid-root
+  # bit, which the kernel ignores under no-new-privileges - applying it
+  # would silently break the intended challenge.
+  # ---------------------------------------------------------------------------
+  ssh2222-privesc:
+    build:
+      context: ./services/ssh2222-privesc
+    image: blueoffice/ssh2222-privesc:latest
+    container_name: blueoffice-ssh2222
+    restart: unless-stopped
+    ports:
+      - "2222:22"
+    networks:
+      - net_ssh2222
+    mem_limit: 256m
+    pids_limit: 150
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 5 - SMB
+  # Player-facing port: 445/tcp
+  # ---------------------------------------------------------------------------
+  smb445:
+    build:
+      context: ./services/smb445
+    image: blueoffice/smb445:latest
+    container_name: blueoffice-smb445
+    restart: unless-stopped
+    ports:
+      - "445:445"
+    networks:
+      - net_smb445
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 150
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 6 - Apache Struts2 CVE-2017-5638 RCE
+  # Player-facing port: 8888/tcp
+  # ---------------------------------------------------------------------------
+  struts8888:
+    build:
+      context: ./services/struts8888
+    image: blueoffice/struts8888:latest
+    container_name: blueoffice-struts8888
+    restart: unless-stopped
+    ports:
+      - "8888:8080"
+    networks:
+      - net_struts8888
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 7 - Dev Panel SQL Injection
+  # Player-facing port: 8000/tcp
+  # ---------------------------------------------------------------------------
+  devpanel8000-sqli:
+    build:
+      context: ./services/devpanel8000-sqli
+    image: blueoffice/devpanel8000-sqli:latest
+    container_name: blueoffice-devpanel8000
+    restart: unless-stopped
+    ports:
+      - "8000:5000"
+    networks:
+      - net_devpanel8000
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 8 - LFI (Local File Inclusion)
+  # Player-facing port: 9999/tcp
+  # ---------------------------------------------------------------------------
+  lfi9999:
+    build:
+      context: ./services/lfi9999
+    image: blueoffice/lfi9999:latest
+    container_name: blueoffice-lfi9999
+    restart: unless-stopped
+    ports:
+      - "9999:8080"
+    networks:
+      - net_lfi9999
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 9 - BlueOffice HR Recruitment Portal: real JBoss AS 4.0.5 RCE
+  # (exploit/multi/http/jboss_invoke_deploy and friends) + ligolo-ng pivot
+  # into an internal-only SSRF-vulnerable Flask API.
+  # Player-facing port: 7777/tcp
+  #
+  # Unlike every other challenge above, rh-jboss and internal-api SHARE a
+  # network (`pivotnet`) - that shared network *is* the challenge: the
+  # player pivots from rh-jboss into 172.30.80.0/24 to reach internal-api.
+  # internal-api publishes no ports to the host at all; it is reachable
+  # only from inside pivotnet (i.e. only after pivoting through rh-jboss).
+  # ---------------------------------------------------------------------------
+  rh-jboss:
+    build:
+      context: ./services/rh-jboss
+    image: blueoffice/rh-jboss:latest
+    container_name: blueoffice-rh-jboss
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - "7777:8080"
+    networks:
+      - pivotnet
+    extra_hosts:
+      - "internal-api.blueoffice.local:172.30.80.50"
+      - "internal-api:172.30.80.50"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 768m
+    pids_limit: 300
+
+  internal-api:
+    build:
+      context: ./services/internal-api
+    image: blueoffice/internal-api:latest
+    container_name: blueoffice-internal-api
+    restart: unless-stopped
+    # Intentionally no `ports:` - not reachable from the host or the
+    # public internet, only from containers attached to pivotnet.
+    networks:
+      pivotnet:
+        ipv4_address: 172.30.80.50
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 10 - Next.js Middleware Auth Bypass (CVE-2025-29927)
+  # Player-facing port: 9000/tcp
+  # Self-hosted production standalone Next.js build.
+  # ---------------------------------------------------------------------------
+  next-middleware-cve:
+    build:
+      context: ./services/next-middleware-cve
+    image: blueoffice/next-middleware-cve:latest
+    container_name: blueoffice-next-middleware-cve
+    restart: unless-stopped
+    ports:
+      - "9000:3000"
+    networks:
+      - net_next_middleware_cve
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 150
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 11 - FST School Portal: access control bypass + SQL injection
+  # Player-facing port: 9005/tcp
+  # ---------------------------------------------------------------------------
+  fst-school:
+    build:
+      context: ./services/fst-school
+    image: blueoffice/fst-school:latest
+    container_name: blueoffice-fst-school
+    restart: unless-stopped
+    ports:
+      - "9005:5000"
+    networks:
+      - net_fst_school
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 12 - Weak JWT HS256 Admin Bypass
+  # Player-facing port: 1000/tcp
+  # ---------------------------------------------------------------------------
+  jwt-weak-secret:
+    build:
+      context: ./services/jwt-weak-secret
+    image: blueoffice/jwt-weak-secret:latest
+    container_name: blueoffice-jwt-weak-secret
+    restart: unless-stopped
+    ports:
+      - "1000:3000"
+    networks:
+      - net_jwt_weak_secret
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 13 - IDOR User Records
+  # Player-facing port: 2000/tcp
+  # ---------------------------------------------------------------------------
+  idor-clock:
+    build:
+      context: ./services/idor-clock
+    image: blueoffice/idor-clock:latest
+    container_name: blueoffice-idor-clock
+    restart: unless-stopped
+    ports:
+      - "2000:5000"
+    networks:
+      - net_idor_clock
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 14 - Cloud Metadata SSRF
+  # Player-facing port: 4000/tcp
+  # ---------------------------------------------------------------------------
+  cloud-metadata-ssrf:
+    build:
+      context: ./services/cloud-metadata-ssrf
+    image: blueoffice/cloud-metadata-ssrf:latest
+    container_name: blueoffice-cloud-metadata-ssrf
+    restart: unless-stopped
+    ports:
+      - "4000:5000"
+    networks:
+      - net_cloud_metadata_ssrf
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 15 - File Upload Extension Bypass RCE
+  # Player-facing port: 4500/tcp
+  # ---------------------------------------------------------------------------
+  file-upload-bypass:
+    build:
+      context: ./services/file-upload-bypass
+    image: blueoffice/file-upload-bypass:latest
+    container_name: blueoffice-file-upload-bypass
+    restart: unless-stopped
+    ports:
+      - "4500:8080"
+    networks:
+      - net_file_upload_bypass
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+# =============================================================================
+# Networks: one dedicated bridge network PER challenge, so containers
+# cannot reach one another - a shell in one challenge container has no
+# network path into any other challenge container, let alone the host.
+#
+# `pivotnet` is the one deliberate exception: it exists solely to connect
+# rh-jboss and internal-api for the challenge 9 pivoting chain, and does
+# not touch any other challenge's network.
+# =============================================================================
+networks:
+  net_ftp:
+    driver: bridge
+  net_web80:
+    driver: bridge
+  net_dashboard3000:
+    driver: bridge
+  net_ssh2222:
+    driver: bridge
+  net_smb445:
+    driver: bridge
+  net_struts8888:
+    driver: bridge
+  net_devpanel8000:
+    driver: bridge
+  net_lfi9999:
+    driver: bridge
+  pivotnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.80.0/24
+  net_next_middleware_cve:
+    driver: bridge
+  net_fst_school:
+    driver: bridge
+  net_jwt_weak_secret:
+    driver: bridge
+  net_idor_clock:
+    driver: bridge
+  net_cloud_metadata_ssrf:
+    driver: bridge
+  net_file_upload_bypass:
+    driver: bridge

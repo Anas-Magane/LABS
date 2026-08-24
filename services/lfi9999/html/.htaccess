@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# "/" -> "/index.php" (visible redirect)
+RewriteRule ^$ /index.php [R=302,L]
+
+# Clean URL: "/flag" -> "/flag.php" (keeps the LFI query string)
+RewriteRule ^flag$ /flag.php [L,QSA]
