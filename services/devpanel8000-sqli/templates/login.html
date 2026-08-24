@@ -2,26 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>BlueOffice Dev Panel - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Dev Panel</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #1e1e2f; color: #eee; display: flex;
-           align-items: center; justify-content: center; height: 100vh; margin: 0; }
-    .box { background: #2a2a3d; padding: 2rem; border-radius: 8px; width: 320px; }
-    input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
-    button { width: 100%; padding: 10px; background: #6c5ce7; color: white; border: none;
-             border-radius: 4px; cursor: pointer; }
-    .error { color: #ff7675; min-height: 1.2em; }
+    :root {
+      --navy: #0f0f1a; --navy-2: #171728; --surface: #1d1d33; --text: #ececf5;
+      --text-dim: #9a9ac2; --accent: #7c6cf0; --accent-2: #5b4cd6; --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--navy); color: var(--text); display: flex; align-items: center;
+           justify-content: center; min-height: 100vh; }
+    .box { background: var(--surface); border: 1px solid var(--border); padding: 2.4rem;
+           border-radius: 12px; width: 340px; box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+    .brand { display: flex; align-items: center; gap: 0.55rem; font-weight: 700; margin-bottom: 1.4rem; }
+    .brand .mark { width: 24px; height: 24px; border-radius: 6px;
+           background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+    h2 { font-size: 1.1rem; margin: 0 0 1.4rem; font-weight: 600; }
+    input { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box;
+            background: var(--navy-2); border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text); font-size: 0.9rem; }
+    input:focus { outline: none; border-color: var(--accent); }
+    button { width: 100%; padding: 10px; margin-top: 0.4rem; background: var(--accent-2); color: white;
+             border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    button:hover { background: #4c3fc4; }
+    .error { color: #ff7675; min-height: 1.2em; font-size: 0.85rem; margin-top: 0.8rem; }
+    .footnote { color: var(--text-dim); font-size: 0.75rem; margin-top: 1.4rem; text-align: center; }
   </style>
 </head>
 <body>
   <div class="box">
-    <h2>BlueOffice Dev Panel</h2>
+    <div class="brand"><span class="mark"></span> BlueOffice</div>
+    <h2>Dev Panel &mdash; Engineering Sign In</h2>
     <form method="post" action="/login">
       <input type="text" name="username" placeholder="Username" autocomplete="off">
       <input type="password" name="password" placeholder="Password" autocomplete="off">
-      <button type="submit">Login</button>
+      <button type="submit">Sign In</button>
     </form>
     <div class="error">{{ error or '' }}</div>
+    <div class="footnote">Internal engineering tooling &middot; restricted access</div>
   </div>
 </body>
 </html>

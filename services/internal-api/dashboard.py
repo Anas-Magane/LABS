@@ -15,15 +15,27 @@ app = Flask(__name__)
 
 DASHBOARD_HTML = """<!doctype html>
 <html>
-<head><title>BlueOffice Internal HR Analytics</title></head>
-<body style="font-family:sans-serif;max-width:800px;margin:40px auto;color:#222">
-<div style="background:#fee;border:1px solid #c00;padding:10px;margin-bottom:20px">
+<head>
+<title>BlueOffice Internal HR Analytics</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; max-width: 720px;
+         margin: 48px auto; color: #1c2b3a; padding: 0 1.5rem; }
+  .banner { background: #fdecea; border: 1px solid #f3c2bc; color: #8a2c22; padding: 12px 16px;
+            border-radius: 6px; margin-bottom: 24px; font-size: 0.9rem; }
+  .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.4rem; }
+  code { background: #eef2f6; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div class="banner">
   INTERNAL ONLY - do not expose this dashboard outside the BlueOffice
   internal network.
 </div>
 <h1>BlueOffice Internal HR Analytics</h1>
-<p>API base URL: <code>http://internal-api.blueoffice.local:5000/api</code></p>
-<p>API documentation is available at <code>/api/docs</code></p>
+<div class="box">
+  <p>API base URL: <code>http://internal-api.blueoffice.local:5000/api</code></p>
+  <p>API documentation is available at <code>/api/docs</code></p>
+</div>
 </body>
 </html>
 """

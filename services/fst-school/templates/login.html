@@ -2,31 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login - FST School Portal</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; color: #222; margin: 0; }
-    nav { background: #003366; padding: 1rem 2rem; }
-    nav a { color: white; margin-right: 1.5rem; text-decoration: none; font-weight: bold; }
-    .box { max-width: 380px; margin: 4rem auto; background: white; padding: 2rem;
-           border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.08); }
-    input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; }
-    button { width: 100%; padding: 10px; background: #003366; color: white; border: none;
-             border-radius: 4px; cursor: pointer; }
-    .error { color: #c0392b; min-height: 1.2em; }
-    .welcome { color: #27ae60; min-height: 1.2em; }
+    :root { --navy: #003366; --border: #e2e8f0; --text-dim: #5b6b82; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f4f6f8;
+           color: #222; margin: 0; }
+    nav { display: flex; align-items: center; justify-content: space-between;
+          background: var(--navy); padding: 1rem 2.2rem; }
+    .brand { color: #fff; font-weight: 700; }
+    .nav-links a { color: #cfe0f5; margin-left: 1.6rem; text-decoration: none; font-weight: 500; font-size: 0.92rem; }
+    .nav-links a:hover { color: #fff; }
+    .box { max-width: 380px; margin: 4.5rem auto; background: white; padding: 2.2rem;
+           border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .box h2 { margin: 0 0 1.4rem; font-size: 1.2rem; color: var(--navy); }
+    label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.3rem; }
+    input { width: 100%; padding: 9px 10px; margin: 0 0 0.9rem; box-sizing: border-box;
+            border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+    input:focus { outline: none; border-color: var(--navy); }
+    button { width: 100%; padding: 10px; background: var(--navy); color: white; border: none;
+             border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    button:hover { background: #012a52; }
+    .error { color: #c0392b; min-height: 1.2em; margin-top: 0.8rem; font-size: 0.88rem; }
+    .welcome { color: #27ae60; min-height: 1.2em; margin-top: 0.8rem; font-size: 0.88rem; }
   </style>
 </head>
 <body>
   <nav>
-    <a href="/">Home</a>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+    <span class="brand">FST School Portal</span>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+    </div>
   </nav>
   <div class="box">
     <h2>Student / Staff Login</h2>
     <form method="post" action="/login">
-      <input type="text" name="username" placeholder="Username or Email" autocomplete="off">
-      <input type="password" name="password" placeholder="Password" autocomplete="off">
+      <label for="username">Username or Email</label>
+      <input id="username" type="text" name="username" placeholder="Username or Email" autocomplete="off">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" placeholder="Password" autocomplete="off">
       <button type="submit">Login</button>
     </form>
     <div class="error">{{ error or '' }}</div>

@@ -2,12 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Database Export</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #101820; color: #e0e1dd; margin: 2rem; }
-    table { border-collapse: collapse; width: 100%; max-width: 900px; margin: 0 auto; }
-    th, td { border: 1px solid #2c3e50; padding: 8px 12px; text-align: left; font-size: 0.9rem; }
-    th { background: #1b2733; }
+    :root { --bg: #101820; --surface: #1b2733; --text: #e0e1dd; --border: rgba(255,255,255,0.06); }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg);
+           color: var(--text); margin: 2rem; }
+    table { border-collapse: collapse; width: 100%; max-width: 900px; margin: 0 auto;
+            border-radius: 8px; overflow: hidden; }
+    th, td { border: 1px solid var(--border); padding: 9px 12px; text-align: left; font-size: 0.88rem; }
+    th { background: var(--surface); font-weight: 600; }
     tr:nth-child(even) { background: #17222c; }
   </style>
 </head>

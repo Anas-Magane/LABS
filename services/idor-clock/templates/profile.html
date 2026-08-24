@@ -2,14 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Profile #{{ user.id }}</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #101820; color: #e0e1dd;
-           display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-    .card { background: #1b2733; padding: 2rem; border-radius: 8px; width: 420px; }
-    h1 { font-size: 1.4rem; margin-top: 0; }
-    .field { margin: 0.6rem 0; }
-    .label { color: #9fb3c8; font-size: 0.85rem; }
+    :root { --bg: #101820; --surface: #1b2733; --text: #e0e1dd; --text-dim: #9fb3c8; --border: rgba(255,255,255,0.06); }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg);
+           color: var(--text); display: flex; align-items: center; justify-content: center;
+           min-height: 100vh; margin: 0; }
+    .card { background: var(--surface); border: 1px solid var(--border); padding: 2rem;
+            border-radius: 10px; width: 420px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    h1 { font-size: 1.3rem; margin: 0 0 1.2rem 0; }
+    .field { margin: 0.8rem 0; }
+    .label { color: var(--text-dim); font-size: 0.78rem; text-transform: uppercase;
+             letter-spacing: 0.05em; margin-bottom: 0.2rem; }
   </style>
 </head>
 <body>

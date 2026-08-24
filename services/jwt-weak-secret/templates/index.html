@@ -2,21 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>BlueOffice Token Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Token Portal</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eaeaea; display: flex;
-           align-items: center; justify-content: center; height: 100vh; margin: 0; }
-    .box { background: #16213e; padding: 2.5rem; border-radius: 8px; width: 360px; text-align: center; }
-    h1 { font-size: 1.4rem; margin-bottom: 1.5rem; }
-    a.btn { display: block; margin: 0.5rem 0; padding: 10px; background: #0f3460; color: #eaeaea;
-            border-radius: 4px; text-decoration: none; }
+    :root {
+      --navy: #12122a; --navy-2: #191933; --surface: #1c1c3a; --text: #eaeaea;
+      --text-dim: #9797c2; --accent: #7fdbff; --accent-2: #0f3460; --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--navy); color: var(--text); display: flex; align-items: center;
+           justify-content: center; min-height: 100vh; }
+    .box { background: var(--surface); border: 1px solid var(--border); padding: 2.6rem;
+           border-radius: 12px; width: 360px; text-align: center; box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+    .brand { display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+             font-weight: 700; margin-bottom: 0.4rem; }
+    .brand .mark { width: 24px; height: 24px; border-radius: 6px;
+           background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+    h1 { font-size: 1.05rem; margin: 0 0 1.6rem; color: var(--text-dim); font-weight: 500; }
+    a.btn { display: block; margin: 0.5rem 0; padding: 11px; background: var(--accent-2); color: var(--text);
+            border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
     a.btn:hover { background: #16558f; }
   </style>
 </head>
 <body>
   <!-- Nabil, I verified everything carefully. Each user has a token, and every token is verified with one weak key that contains your name, four numbers, and a symbol at the end. You are the admin. Do not forget to add the WAF to our application. -->
   <div class="box">
-    <h1>BlueOffice Token Portal</h1>
+    <div class="brand"><span class="mark"></span> BlueOffice</div>
+    <h1>Token Portal</h1>
     <a class="btn" href="/register">Register</a>
     <a class="btn" href="/login">Login</a>
     <a class="btn" href="/admin">Admin Panel</a>

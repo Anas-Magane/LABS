@@ -2,20 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>BlueOffice Dev Panel - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Dev Panel</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #1e1e2f; color: #eee; padding: 2rem; }
-    .card { background: #2a2a3d; padding: 1.5rem; border-radius: 8px; max-width: 480px; }
-    a { color: #a29bfe; }
+    :root {
+      --navy: #0f0f1a; --navy-2: #171728; --surface: #1d1d33; --text: #ececf5;
+      --text-dim: #9a9ac2; --accent: #7c6cf0; --accent-2: #5b4cd6; --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--navy); color: var(--text); }
+    header { display: flex; align-items: center; padding: 1rem 2.5rem; background: var(--navy-2);
+             border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 0.55rem; font-weight: 700; }
+    .brand .mark { width: 24px; height: 24px; border-radius: 6px;
+           background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+    main { max-width: 640px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+    h1 { font-size: 1.4rem; margin: 0 0 1.5rem; font-weight: 600; }
+    .card { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;
+            border-radius: 10px; max-width: 480px; }
+    .card p { margin: 0.4rem 0; font-size: 0.92rem; }
+    .card a { color: var(--accent); text-decoration: none; }
+    .card a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <h1>Dev Panel</h1>
-  <div class="card">
-    <p><strong>Username:</strong> {{ username }}</p>
-    <p><strong>Email:</strong> {{ email }}</p>
-    <p><a href="/logout">Logout</a></p>
-  </div>
+  <header><div class="brand"><span class="mark"></span> BlueOffice Dev Panel</div></header>
+  <main>
+    <h1>Dev Panel</h1>
+    <div class="card">
+      <p><strong>Username:</strong> {{ username }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><a href="/logout">Logout</a></p>
+    </div>
+  </main>
 
   <script>
     // Session token issued by the legacy auth service.

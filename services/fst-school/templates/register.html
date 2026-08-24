@@ -2,20 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Register - FST School Portal</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; color: #222; margin: 0; }
-    nav { background: #003366; padding: 1rem 2rem; }
-    nav a { color: white; margin-right: 1.5rem; text-decoration: none; font-weight: bold; }
-    .box { max-width: 500px; margin: 4rem auto; background: white; padding: 2rem;
-           border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.08); text-align: center; }
+    :root { --navy: #003366; --border: #e2e8f0; --text-dim: #5b6b82; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f4f6f8;
+           color: #222; margin: 0; }
+    nav { display: flex; align-items: center; justify-content: space-between;
+          background: var(--navy); padding: 1rem 2.2rem; }
+    .brand { color: #fff; font-weight: 700; }
+    .nav-links a { color: #cfe0f5; margin-left: 1.6rem; text-decoration: none; font-weight: 500; font-size: 0.92rem; }
+    .nav-links a:hover { color: #fff; }
+    .box { max-width: 500px; margin: 4.5rem auto; background: white; padding: 2.2rem;
+           border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: center; }
+    .box h2 { margin: 0 0 0.8rem; color: var(--navy); font-size: 1.2rem; }
+    .box p { color: var(--text-dim); font-size: 0.92rem; }
   </style>
 </head>
 <body>
   <nav>
-    <a href="/">Home</a>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+    <span class="brand">FST School Portal</span>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+    </div>
   </nav>
   <div class="box">
     <h2>Registration</h2>

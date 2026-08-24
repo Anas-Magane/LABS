@@ -5,23 +5,45 @@
   <title>FST School Portal</title>
   <!-- Note: I forgot my password. I am Anas, I study at FST. This password is flag12 and follows this format: CTF{My_password}. -->
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; color: #222; margin: 0; }
-    nav { background: #003366; padding: 1rem 2rem; }
-    nav a { color: white; margin-right: 1.5rem; text-decoration: none; font-weight: bold; }
-    nav a:hover { text-decoration: underline; }
-    .hero { padding: 4rem 2rem; text-align: center; }
-    .hero h1 { color: #003366; }
-    .hero p { max-width: 600px; margin: 1rem auto; color: #555; }
-    footer { text-align: center; padding: 1.5rem; color: #888; font-size: 0.85rem; }
+    :root { --navy: #003366; --navy-2: #012a52; --accent: #0d6efd; --border: #e2e8f0; --text-dim: #5b6b82; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #f4f6f8;
+           color: #222; margin: 0; }
+    nav { display: flex; align-items: center; justify-content: space-between;
+          background: var(--navy); padding: 1rem 2.2rem; }
+    .brand { color: #fff; font-weight: 700; letter-spacing: 0.02em; }
+    .nav-links a { color: #cfe0f5; margin-left: 1.6rem; text-decoration: none; font-weight: 500; font-size: 0.92rem; }
+    .nav-links a:hover { color: #fff; }
+    .hero { padding: 5rem 2rem 4rem; text-align: center; background: linear-gradient(180deg, #eef3f9, #f4f6f8); }
+    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em;
+               font-size: 0.78rem; font-weight: 700; }
+    .hero h1 { color: var(--navy); margin: 0.6rem 0 0.8rem; font-size: 2.1rem; }
+    .hero p { max-width: 600px; margin: 0 auto; color: var(--text-dim); line-height: 1.6; }
+    .hero .cta { margin-top: 1.8rem; }
+    .btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 6px; text-decoration: none;
+           font-weight: 600; font-size: 0.9rem; }
+    .btn.primary { background: var(--navy); color: #fff; }
+    .btn.ghost { color: var(--navy); border: 1px solid var(--border); margin-left: 0.6rem; }
+    .info { max-width: 780px; margin: 0 auto; padding: 3rem 2rem; display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+    .info .card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1.3rem;
+                  box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .info .card h3 { margin: 0 0 0.4rem; font-size: 0.95rem; color: var(--navy); }
+    .info .card p { margin: 0; color: var(--text-dim); font-size: 0.88rem; line-height: 1.5; }
+    footer { text-align: center; padding: 1.8rem; color: #888; font-size: 0.85rem; }
   </style>
 </head>
 <body>
   <nav>
-    <a href="/">Home</a>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+    <span class="brand">FST School Portal</span>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+    </div>
   </nav>
   <div class="hero">
+    <div class="eyebrow">Student &amp; Staff Portal</div>
     <h1>Welcome to FST School Portal</h1>
     <p>
       The Faculty of Sciences and Techniques student portal gives students
@@ -29,6 +51,15 @@
       resources. Please log in with your student or staff account to
       continue.
     </p>
+    <div class="cta">
+      <a class="btn primary" href="/login">Student / Staff Login</a>
+      <a class="btn ghost" href="/register">Register</a>
+    </div>
+  </div>
+  <div class="info">
+    <div class="card"><h3>Courses &amp; Grades</h3><p>View your enrolled courses, schedules, and grade history.</p></div>
+    <div class="card"><h3>Administration</h3><p>Access administrative resources and department announcements.</p></div>
+    <div class="card"><h3>Support</h3><p>Contact the registrar's office for account or access issues.</p></div>
   </div>
   <footer>&copy; FST School Portal</footer>
 </body>

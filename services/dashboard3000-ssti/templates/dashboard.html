@@ -2,29 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>BlueOffice Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Staff Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #0d1b2a; color: #e0e1dd; padding: 2rem; }
-    .card { background: #1b263b; padding: 1.5rem; border-radius: 8px; max-width: 480px; margin-bottom: 1rem; }
-    input { padding: 8px; width: 70%; box-sizing: border-box; }
-    button { padding: 8px 14px; background: #415a77; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    pre { background: #0d1b2a; padding: 10px; border-radius: 4px; white-space: pre-wrap; }
+    :root {
+      --navy: #0a1628; --navy-2: #0f2137; --surface: #16233a; --text: #e6edf5;
+      --text-dim: #94a7bf; --accent: #38bdf8; --accent-2: #2563eb; --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--navy); color: var(--text); }
+    header { display: flex; align-items: center; justify-content: space-between;
+           padding: 1rem 2.5rem; background: var(--navy-2); border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 0.55rem; font-weight: 700; }
+    .brand .mark { width: 24px; height: 24px; border-radius: 6px;
+           background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+    main { max-width: 640px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+    h1 { font-size: 1.4rem; margin: 0 0 1.6rem; font-weight: 600; }
+    .card { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;
+            border-radius: 10px; max-width: 480px; margin-bottom: 1.2rem; }
+    .card h3 { margin: 0 0 0.7rem; font-size: 0.85rem; color: var(--text-dim);
+               text-transform: uppercase; letter-spacing: 0.05em; }
+    input#nameInput { padding: 9px 10px; width: 65%; box-sizing: border-box; background: var(--navy-2);
+           border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; }
+    button { padding: 9px 16px; background: var(--accent-2); color: white; border: none;
+             border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.88rem; }
+    button:hover { background: #1d4ed8; }
+    pre { background: var(--navy-2); padding: 12px; border-radius: 6px; white-space: pre-wrap;
+          margin-top: 0.9rem; font-size: 0.85rem; border: 1px solid var(--border); }
   </style>
 </head>
 <body>
-  <h1>Welcome to the BlueOffice Dashboard</h1>
+  <header>
+    <div class="brand"><span class="mark"></span> BlueOffice</div>
+  </header>
+  <main>
+    <h1>Welcome to the BlueOffice Dashboard</h1>
 
-  <div class="card">
-    <h3>flag0.txt</h3>
-    <pre>{{ flag }}</pre>
-  </div>
+    <div class="card">
+      <h3>flag0.txt</h3>
+      <pre>{{ flag }}</pre>
+    </div>
 
-  <div class="card">
-    <h3>Say hello</h3>
-    <input id="nameInput" type="text" placeholder="Enter your name" value="test">
-    <button onclick="sendWelcome()">Submit</button>
-    <pre id="welcomeResult"></pre>
-  </div>
+    <div class="card">
+      <h3>Say hello</h3>
+      <input id="nameInput" type="text" placeholder="Enter your name" value="test">
+      <button onclick="sendWelcome()">Submit</button>
+      <pre id="welcomeResult"></pre>
+    </div>
+  </main>
 
   <script>
     // Client-side guard only - the real access control lives in your

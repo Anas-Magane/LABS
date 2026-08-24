@@ -1,8 +1,27 @@
 <!doctype html>
 <html>
-<head><title>BlueOffice HR Recruitment Portal - Upload CV</title></head>
-<body style="font-family:sans-serif;max-width:800px;margin:40px auto;color:#222">
-<h1>Upload your CV</h1>
+<head>
+<title>BlueOffice HR Recruitment Portal - Upload CV</title>
+<style>
+  body { font-family: Verdana, Geneva, Arial, sans-serif; background: #eef1f4; color: #222; margin: 0; }
+  .topbar { background: #1f3a5f; color: #cfd9e4; padding: 0.5rem 2rem; font-size: 0.78rem; }
+  .banner { background: #26466f; color: #fff; padding: 1.6rem 2rem; }
+  .banner h1 { margin: 0; font-size: 1.5rem; font-weight: normal; }
+  .content { max-width: 760px; margin: 1.5rem auto; background: #fff; border: 1px solid #d7dee4;
+             padding: 1.8rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .content a { color: #26466f; }
+  .content input[type=text], .content input[type=email] { padding: 7px 9px; width: 100%;
+             max-width: 320px; box-sizing: border-box; border: 1px solid #d7dee4; border-radius: 3px; }
+  .content input[type=submit] { padding: 7px 16px; background: #26466f; color: #fff; border: none;
+             border-radius: 3px; }
+  .notice { color: #8a8f94; font-size: 13px; }
+  footer { color: #999; font-size: 12px; padding: 0 2rem 1.5rem; max-width: 760px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="topbar">BlueOffice &middot; Human Resources</div>
+<div class="banner"><h1>Upload your CV</h1></div>
+<div class="content">
 <p><a href="/">&larr; Back to portal</a></p>
 
 <form>
@@ -11,11 +30,12 @@
   <p><input type="file"></p>
   <p><input type="submit" value="Submit application" disabled></p>
 </form>
-<p style="color:#888;font-size:13px">CV upload is temporarily disabled while
+<p class="notice">CV upload is temporarily disabled while
 IT migrates this server off the old JBoss stack.</p>
+</div>
 
 <hr>
-<footer style="color:#999;font-size:12px">
+<footer>
 Powered by legacy JBoss Application Server
 </footer>
 </body>
