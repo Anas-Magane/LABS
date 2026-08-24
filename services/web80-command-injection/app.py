@@ -2,7 +2,7 @@
 """
 BlueOffice Breach - Challenge 2: Web Command Injection (port 80)
 
-A tiny internal "portal" with an intentionally vulnerable /flag endpoint.
+A tiny internal "portal" with an intentionally vulnerable /internal endpoint.
 The cmd parameter is passed straight into a shell (classic command
 injection). The literal command "cat" is blacklisted, forcing players
 to use an alternative file-reading technique (tac, head, less, more,
@@ -209,7 +209,7 @@ def admin_page():
     return Response(ADMIN_HTML, mimetype="text/html")
 
 
-@app.route("/flag")
+@app.route("/internal")
 def flag_page():
     cmd = request.args.get("cmd", "")
     output_html = ""
