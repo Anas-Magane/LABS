@@ -1,0 +1,9 @@
+BlueOffice - Employee Directory (HR export, internal use only)
+----------------------------------------------------------------
+name,department,email
+Sara El Amrani,Finance,s.elamrani@blueoffice.local
+Youssef Bennani,IT Operations,y.bennani@blueoffice.local
+Nadia Chraibi,Human Resources,n.chraibi@blueoffice.local
+Karim Ouazzani,Sales,k.ouazzani@blueoffice.local
+Imane Fassi,Legal,i.fassi@blueoffice.local
+Reda Alaoui,IT Operations,r.alaoui@blueoffice.local

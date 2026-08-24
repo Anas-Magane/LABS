@@ -14,7 +14,7 @@ machine.
 ### 2. Port 80 command injection flag
 - **Location:** `web80-command-injection` container, `/app/files/flag1.txt`
 - **Content:** `CTF{ALLer_Aller_HERE_WE_GO_ALLEr_Th1s_1s_The_Flaaaag}`
-- (Decoy file `secret.txt` in the same directory contains `Some commands may be blacklisted.`)
+- (Decoy files in the same directory: `secret.txt` contains `Some commands may be blacklisted.`; plus 10 more fake "leaked company file" decoys — `employee_directory.txt`, `payroll_summary_q3.txt`, `client_contacts.txt`, `server_inventory.txt`, `vpn_access_list.txt`, `network_notes.txt`, `hr_policy_draft.txt`, `finance_budget_2025.txt`, `it_helpdesk_tickets.txt`, `project_roadmap.txt` — none contain a flag; they exist purely so `ls` sells the "impact" of the command injection as reaching real company data.)
 
 ### 3. Port 3000 login flag
 - **Location:** `dashboard3000-ssti` container, rendered on `/dashboard` as `flag0.txt`

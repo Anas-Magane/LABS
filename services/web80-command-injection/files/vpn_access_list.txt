@@ -1,0 +1,7 @@
+BlueOffice - VPN Access List (IT Ops, restricted)
+----------------------------------------------------------------
+user               group          last_login
+r.alaoui           it-admin       2025-11-02
+y.bennani          it-admin       2025-11-04
+n.chraibi          hr-remote      2025-10-28
+contractor.temp01  vendor-vpn     2025-09-15  (expired)

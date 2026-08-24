@@ -1,0 +1,8 @@
+BlueOffice - Payroll Summary, Q3 (internal, do not distribute)
+----------------------------------------------------------------
+Department        Headcount   Total (MAD)
+Finance                  4       182,400
+IT Operations             6       261,900
+Human Resources           3       118,600
+Sales                     8       304,200
+Legal                     2        97,300

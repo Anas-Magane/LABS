@@ -1,0 +1,6 @@
+BlueOffice - Internal Portal Roadmap (Q4 draft)
+----------------------------------------------------------------
+- Migrate legacy portal pages to the new identity platform.
+- Decommission the Struts2 internal mirror.
+- Consolidate HR analytics dashboard behind SSO.
+- Security review of externally-reachable internal tools.

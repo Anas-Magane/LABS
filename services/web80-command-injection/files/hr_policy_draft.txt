@@ -1,0 +1,6 @@
+BlueOffice - Remote Work Policy (HR, draft v0.3)
+----------------------------------------------------------------
+1. Company devices must have disk encryption enabled.
+2. VPN required for access to any internal.blueoffice.local service.
+3. Shared credentials are prohibited; use the SSO portal.
+4. Report lost/stolen devices to IT within 24 hours.

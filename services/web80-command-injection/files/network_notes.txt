@@ -1,0 +1,6 @@
+BlueOffice - Network Segmentation Notes (IT Ops, draft)
+----------------------------------------------------------------
+- Public-facing services isolated per app on their own subnet.
+- Internal HR/finance DB reachable only from the office VLAN + VPN.
+- Guest wifi has no route to internal segments.
+- TODO: rotate shared admin credentials next maintenance window.

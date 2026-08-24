@@ -1,0 +1,7 @@
+BlueOffice - Internal Server Inventory (IT Ops)
+----------------------------------------------------------------
+hostname                 role                 network
+mail01.blueoffice.local   internal mail relay   net_internal
+db01.blueoffice.local     HR/finance database    net_internal
+fileserver.blueoffice.local  shared drives        net_internal
+vpn01.blueoffice.local    remote access gateway   net_dmz

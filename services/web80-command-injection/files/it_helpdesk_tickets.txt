@@ -1,0 +1,6 @@
+BlueOffice - IT Helpdesk, Open Tickets (last 7 days)
+----------------------------------------------------------------
+#1042  y.bennani     VPN client reconnect loop            in progress
+#1043  n.chraibi     Shared drive permissions request       pending
+#1044  k.ouazzani    New laptop provisioning                 closed
+#1045  i.fassi       Password reset - SSO portal              closed
