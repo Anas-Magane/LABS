@@ -514,6 +514,32 @@ services:
     mem_limit: 512m
     pids_limit: 200
 
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 20 - AI Vault: three-level Gandalf-style prompt injection
+  # Player-facing port: 7000/tcp
+  # Backed by a genuine local, open-weights LLM (Qwen2.5-1.5B-Instruct,
+  # GGUF, running fully offline via llama.cpp - baked into the image at
+  # build time, zero external API calls and zero internet egress at
+  # runtime). Model weights make this by far the heaviest image in the
+  # repo, hence the larger mem_limit.
+  # ---------------------------------------------------------------------------
+  ai-vault7000-prompt-injection:
+    build:
+      context: ./services/ai-vault7000-prompt-injection
+    image: blueoffice/ai-vault7000-prompt-injection:latest
+    container_name: blueoffice-ai-vault7000
+    restart: unless-stopped
+    ports:
+      - "7000:5000"
+    networks:
+      - net_ai_vault7000
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 3072m
+    pids_limit: 100
+
 # =============================================================================
 # Networks: one dedicated bridge network PER challenge, so containers
 # cannot reach one another - a shell in one challenge container has no
@@ -564,6 +590,8 @@ networks:
   net_helpdesk6000:
     driver: bridge
   net_kudoswall5050:
+    driver: bridge
+  net_ai_vault7000:
     driver: bridge
 
 # =============================================================================

@@ -60,5 +60,6 @@ following rules apply for the duration of the engagement:
 | 3001 | TCP      | Aramoon internal tools portal |
 | 6000 | TCP      | IT Helpdesk |
 | 5050 | TCP      | Employee Kudos Wall |
+| 7000 | TCP      | AI Vault |
 
 Have fun, enumerate thoroughly, and good luck.
