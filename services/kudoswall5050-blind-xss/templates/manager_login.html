@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Manager Login</title>
+  <style>
+    :root { --bg: #16131f; --panel: #201c2e; --text: #f1eefc; --text-dim: #ab9fcf;
+            --accent: #ffb86b; --accent-2: #3a2e57; --border: rgba(255,255,255,0.08); }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--bg); color: var(--text); display: flex; align-items: center;
+           justify-content: center; min-height: 100vh; }
+    .box { background: var(--panel); border: 1px solid var(--border); padding: 2.2rem;
+           border-radius: 12px; width: 360px; }
+    h2 { font-size: 1.1rem; margin: 0 0 1rem; }
+    label { display: block; font-size: 0.8rem; color: var(--text-dim); margin: 0.7rem 0 0.3rem; }
+    input { width: 100%; padding: 0.6rem 0.7rem; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; }
+    button { margin-top: 1.2rem; width: 100%; background: var(--accent-2); color: var(--accent);
+             border: 1px solid var(--border); padding: 0.6rem; border-radius: 6px;
+             font-size: 0.9rem; cursor: pointer; }
+    .error { color: #ff8080; font-size: 0.8rem; margin-top: 0.6rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>HR Manager Login</h2>
+    <form method="post">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="off" required>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="off" required>
+      <button type="submit">Log in</button>
+    </form>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  </div>
+</body>
+</html>

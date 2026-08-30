@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | IT Helpdesk</title>
+  <style>
+    :root {
+      --navy: #12122a; --navy-2: #191933; --surface: #1c1c3a; --text: #eaeaea;
+      --text-dim: #9797c2; --accent: #7fdbff; --accent-2: #0f3460; --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--navy); color: var(--text); }
+    header { background: var(--navy-2); border-bottom: 1px solid var(--border); padding: 1rem 2rem;
+             display: flex; justify-content: space-between; align-items: center; }
+    header a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 2rem; }
+    h1 { font-size: 1.4rem; margin: 0 0 0.4rem; }
+    p.lead { color: var(--text-dim); font-size: 0.9rem; margin: 0 0 1.6rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+            padding: 1.4rem; margin-bottom: 1.6rem; }
+    label { display: block; font-size: 0.8rem; color: var(--text-dim); margin: 0.8rem 0 0.3rem; }
+    input, textarea { width: 100%; padding: 0.6rem 0.7rem; background: var(--navy);
+      border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; }
+    textarea { min-height: 120px; resize: vertical; font-family: inherit; }
+    button { margin-top: 1.2rem; background: var(--accent-2); color: var(--accent);
+             border: 1px solid var(--border); padding: 0.6rem 1.2rem; border-radius: 6px;
+             font-size: 0.9rem; cursor: pointer; }
+    button:hover { background: #123a70; }
+    .tickets h2 { font-size: 1rem; color: var(--text-dim); font-weight: 600; }
+    .ticket { border-bottom: 1px solid var(--border); padding: 0.6rem 0; font-size: 0.85rem; }
+    .ticket .subj { color: var(--text); }
+    .ticket .meta { color: var(--text-dim); font-size: 0.75rem; }
+    .hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.6rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>BlueOffice IT Helpdesk</strong>
+    <a href="/admin/login">Staff Login</a>
+  </header>
+  <div class="wrap">
+    <h1>Submit a Support Ticket</h1>
+    <p class="lead">Our IT staff reviews every ticket. Rich formatting is supported in the
+      message body so replies render nicely for staff.</p>
+    <div class="card">
+      <form method="post" action="/submit">
+        <label for="name">Your name</label>
+        <input id="name" name="name" type="text" placeholder="Jane Doe" required>
+        <label for="subject">Subject</label>
+        <input id="subject" name="subject" type="text" placeholder="VPN not connecting" required>
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Describe your issue..." required></textarea>
+        <button type="submit">Submit Ticket</button>
+      </form>
+    </div>
+    <div class="tickets">
+      <h2>Recently submitted</h2>
+      {% for t in tickets[:10] %}
+      <div class="ticket">
+        <div class="subj">#{{ t.id }} - {{ t.subject }}</div>
+        <div class="meta">{{ t.name }} - {{ t.created_at }}</div>
+      </div>
+      {% else %}
+      <p class="hint">No tickets yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

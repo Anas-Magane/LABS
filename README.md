@@ -58,5 +58,7 @@ following rules apply for the duration of the engagement:
 | 4500 | TCP      | BlueOffice ID Badge Photo Upload |
 | 5432 | TCP      | Database service |
 | 3001 | TCP      | Aramoon internal tools portal |
+| 6000 | TCP      | IT Helpdesk |
+| 5050 | TCP      | Employee Kudos Wall |
 
 Have fun, enumerate thoroughly, and good luck.

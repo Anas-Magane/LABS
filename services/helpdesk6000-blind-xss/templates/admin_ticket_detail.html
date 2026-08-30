@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Ticket #{{ ticket.id }}</title>
+  <style>
+    :root { --navy: #12122a; --navy-2: #191933; --surface: #1c1c3a; --text: #eaeaea;
+            --text-dim: #9797c2; --border: rgba(255,255,255,0.08); }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--navy); color: var(--text); }
+    header { background: var(--navy-2); border-bottom: 1px solid var(--border); padding: 1rem 2rem;
+             display: flex; justify-content: space-between; align-items: center; }
+    header a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 2rem; }
+    .meta { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 1rem; }
+    .body-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+                  padding: 1.4rem; font-size: 0.9rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Ticket #{{ ticket.id }} - {{ ticket.subject }}</strong>
+    <a href="/admin/tickets">Back to queue</a>
+  </header>
+  <div class="wrap">
+    <div class="meta">From {{ ticket.name }} - {{ ticket.created_at }}</div>
+    <!--
+      NOTE (internal): ticket bodies support rich-text/emoji formatting so
+      replies render nicely for staff - hence the raw render below.
+    -->
+    <div class="body-panel">{{ ticket.message | safe }}</div>
+  </div>
+</body>
+</html>

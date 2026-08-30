@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Moderation Queue</title>
+  <style>
+    :root { --bg: #16131f; --panel: #201c2e; --accent-2: #3a2e57; --text: #f1eefc;
+            --text-dim: #ab9fcf; --border: rgba(255,255,255,0.08); }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--bg); color: var(--text); }
+    header { background: var(--accent-2); border-bottom: 1px solid var(--border); padding: 1rem 2rem;
+             display: flex; justify-content: space-between; align-items: center; }
+    header a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; margin-left: 1rem; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 2rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-dim); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+    a.klink { color: #ffb86b; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Moderation Queue</strong>
+    <div><a href="/manager/secret-notes">Secret Notes</a><a href="/manager/logout">Log out</a></div>
+  </header>
+  <div class="wrap">
+    <table>
+      <tr><th>ID</th><th>For</th><th>From</th><th>Submitted</th></tr>
+      {% for k in pending %}
+      <tr>
+        <td>#{{ k.id }}</td>
+        <td><a class="klink" href="/manager/queue/{{ k.id }}">{{ k.recipient }}</a></td>
+        <td>{{ k.sender }}</td>
+        <td>{{ k.created_at }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4">Queue is empty.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>

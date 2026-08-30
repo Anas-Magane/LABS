@@ -463,6 +463,57 @@ services:
     mem_limit: 512m
     pids_limit: 100
 
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 18 - IT Helpdesk Blind Stored XSS -> admin session hijack
+  # Player-facing port: 6000/tcp
+  # Ships a headless Chromium + chromedriver so the in-process admin bot
+  # (bot.py) genuinely logs into /admin and opens every ticket, exactly
+  # like a real IT admin - this is what makes the stored XSS in the
+  # ticket-detail preview genuinely exploitable instead of self-XSS.
+  # ---------------------------------------------------------------------------
+  helpdesk6000-blind-xss:
+    build:
+      context: ./services/helpdesk6000-blind-xss
+    image: blueoffice/helpdesk6000-blind-xss:latest
+    container_name: blueoffice-helpdesk6000
+    restart: unless-stopped
+    ports:
+      - "6000:5000"
+    networks:
+      - net_helpdesk6000
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 200
+
+  # ---------------------------------------------------------------------------
+  # CHALLENGE 19 - Employee Kudos Wall Blind Stored XSS -> manager session
+  # hijack
+  # Player-facing port: 5050/tcp
+  # Same blind-XSS-plus-bot pattern as challenge 18, reskinned as a kudos
+  # moderation queue reviewed by a headless-Chromium HR-manager bot
+  # (bot.py) instead of an admin ticket queue - a second, independently
+  # solvable target so players get two shots at the same technique class.
+  # ---------------------------------------------------------------------------
+  kudoswall5050-blind-xss:
+    build:
+      context: ./services/kudoswall5050-blind-xss
+    image: blueoffice/kudoswall5050-blind-xss:latest
+    container_name: blueoffice-kudoswall5050
+    restart: unless-stopped
+    ports:
+      - "5050:5000"
+    networks:
+      - net_kudoswall5050
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 200
+
 # =============================================================================
 # Networks: one dedicated bridge network PER challenge, so containers
 # cannot reach one another - a shell in one challenge container has no
@@ -509,6 +560,10 @@ networks:
   net_postgres5432:
     driver: bridge
   net_reactoshell3001:
+    driver: bridge
+  net_helpdesk6000:
+    driver: bridge
+  net_kudoswall5050:
     driver: bridge
 
 # =============================================================================
