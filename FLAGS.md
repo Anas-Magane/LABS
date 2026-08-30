@@ -7,7 +7,7 @@ machine.
 ---
 
 ### 1. FTP flag
-- **Location:** FTP container, `/home/ftpsvc/flag.txt` (reachable only through the simulated vsFTPd 2.3.4 backdoor shell on port 6200, never via the FTP protocol itself)
+- **Location:** FTP container, `/home/ftpsvc/flag.txt` (reachable only through the simulated vsFTPd 2.3.4 backdoor shell, which dials a reverse shell back to whoever sent the trigger, never via the FTP protocol itself)
 - **Content:** `CTF{4LW4YS_CH3CK_0LD_CV3S_B3F0R3_M0V1NG_0N}`
 - (Decoy file `fake_flag.txt` is served anonymously over FTP and contains `Nice try — this is a decoy, not the real flag.`)
 

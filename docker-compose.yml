@@ -40,10 +40,18 @@ services:
 
   # ---------------------------------------------------------------------------
   # CHALLENGE 1 - FTP (vsFTPd 2.3.4 style backdoor)
-  # Player-facing port: 21/tcp
-  # Also exposes: 6200/tcp (the simulated backdoor bind shell - opened only
-  # after the smiley-face trigger is sent) and the passive data port range,
-  # both of which are required for the FTP exploit chain to work end to end.
+  # Player-facing port: 21/tcp, plus the passive data port range.
+  # The simulated CVE-2011-2523 backdoor (smiley-face trigger in USER) fires
+  # two shell paths at once:
+  #   - a real bind listener on 6200, identical to the real CVE, so the
+  #     stock Metasploit module (exploit/unix/ftp/vsftpd_234_backdoor) works
+  #     unmodified;
+  #   - a reverse dial straight back out to whichever IP sent the trigger
+  #     (default port 1234, chooseable via the trigger itself), for the
+  #     manual nc-based solve path. It only ever calls back the IP that
+  #     already completed the FTP TCP handshake, never an attacker-supplied
+  #     arbitrary address, so this stays safe with many players sharing the
+  #     same public IP - the server can't be pointed at a third-party target.
   # ---------------------------------------------------------------------------
   ftp-challenge:
     build:
@@ -56,7 +64,7 @@ services:
       - FTP_PASV_PORTS=21100-21110
     ports:
       - "21:2121"          # FTP control channel (vsFTPd 2.3.4 banner)
-      - "6200:6200"        # simulated CVE-2011-2523 backdoor bind shell
+      - "6200:6200"        # simulated CVE-2011-2523 backdoor bind shell (Metasploit-compatible)
       - "21100-21110:21100-21110"  # FTP passive data channel
     networks:
       - net_ftp
