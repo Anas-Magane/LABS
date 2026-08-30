@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | AI Vault - Level {{ level }}</title>
+  <style>
+    :root {
+      --bg: #0d1117; --panel: #161b22; --text: #e6edf3; --text-dim: #8b949e;
+      --accent: #58a6ff; --accent-2: #1f2937; --border: rgba(255,255,255,0.08);
+      --bubble-user: #1f6feb; --bubble-bot: #21262d;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--bg); color: var(--text); }
+    header { background: var(--accent-2); border-bottom: 1px solid var(--border); padding: 1rem 2rem;
+             display: flex; justify-content: space-between; align-items: center; }
+    header a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column;
+            height: calc(100vh - 66px); }
+    #log { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
+    .msg { max-width: 80%; padding: 0.6rem 0.9rem; border-radius: 10px; margin-bottom: 0.6rem;
+           font-size: 0.88rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+    .msg.user { background: var(--bubble-user); margin-left: auto; }
+    .msg.bot { background: var(--bubble-bot); border: 1px solid var(--border); }
+    .msg.sys { color: var(--text-dim); font-size: 0.78rem; text-align: center; }
+    form { display: flex; gap: 0.6rem; margin-top: 0.8rem; }
+    input[type=text] { flex: 1; padding: 0.7rem 0.9rem; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; }
+    button { background: var(--accent); color: var(--bg); border: none; padding: 0 1.2rem;
+             border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    button.reset { background: transparent; color: var(--text-dim); border: 1px solid var(--border);
+                   font-weight: 400; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>AI Vault - Level {{ level }}</strong>
+    <a href="/">All levels</a>
+  </header>
+  <div class="wrap">
+    <div id="log"></div>
+    <form id="chatform">
+      <input id="msg" type="text" placeholder="Say something..." autocomplete="off" maxlength="500">
+      <button type="submit">Send</button>
+      <button type="button" class="reset" id="resetbtn">Reset</button>
+    </form>
+  </div>
+  <script>
+    const level = {{ level }};
+    const log = document.getElementById('log');
+    const form = document.getElementById('chatform');
+    const input = document.getElementById('msg');
+
+    function addMsg(role, text) {
+      const el = document.createElement('div');
+      el.className = 'msg ' + role;
+      el.textContent = text;
+      log.appendChild(el);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      addMsg('user', text);
+      input.value = '';
+      addMsg('sys', 'thinking...');
+      const thinking = log.lastChild;
+      try {
+        const res = await fetch(`/api/chat/${level}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+        thinking.remove();
+        addMsg('bot', data.reply || data.error || '(no response)');
+      } catch (err) {
+        thinking.remove();
+        addMsg('sys', 'Error: ' + err);
+      }
+    });
+
+    document.getElementById('resetbtn').addEventListener('click', async () => {
+      await fetch(`/api/reset/${level}`, { method: 'POST' });
+      log.innerHTML = '';
+      addMsg('sys', 'Conversation reset.');
+    });
+  </script>
+</body>
+</html>

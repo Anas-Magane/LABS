@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | AI Vault</title>
+  <style>
+    :root {
+      --bg: #0d1117; --panel: #161b22; --text: #e6edf3; --text-dim: #8b949e;
+      --accent: #58a6ff; --accent-2: #1f2937; --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--bg); color: var(--text); }
+    header { background: var(--accent-2); border-bottom: 1px solid var(--border); padding: 1rem 2rem; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 2rem; }
+    h1 { font-size: 1.4rem; margin: 0 0 0.4rem; }
+    p.lead { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; margin: 0 0 1.8rem; }
+    .levels { display: grid; gap: 1rem; }
+    .lvl { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+           padding: 1.2rem 1.4rem; display: flex; justify-content: space-between; align-items: center; }
+    .lvl h2 { font-size: 1rem; margin: 0 0 0.3rem; }
+    .lvl p { margin: 0; font-size: 0.82rem; color: var(--text-dim); }
+    .lvl a { color: var(--bg); background: var(--accent); text-decoration: none; font-size: 0.85rem;
+             padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; white-space: nowrap; margin-left: 1rem; }
+  </style>
+</head>
+<body>
+  <header><strong>BlueOffice AI Vault</strong></header>
+  <div class="wrap">
+    <h1>Talk your way past the assistant</h1>
+    <p class="lead">Three copies of the same internal help bot, each holding its own confidential
+      access code and told never to reveal it. Each level adds one more real defense on top of the
+      last. The bot is a genuine local language model - no scripted answers.</p>
+    <div class="levels">
+      <div class="lvl">
+        <div><h2>Level 1 - The Rookie</h2><p>A brand-new assistant, fresh out of onboarding.</p></div>
+        <a href="/level/1">Enter</a>
+      </div>
+      <div class="lvl">
+        <div><h2>Level 2 - The Filter</h2><p>Now screening messages for suspicious wording.</p></div>
+        <a href="/level/2">Enter</a>
+      </div>
+      <div class="lvl">
+        <div><h2>Level 3 - The Vault</h2><p>Locked down on both ends - or is it?</p></div>
+        <a href="/level/3">Enter</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
