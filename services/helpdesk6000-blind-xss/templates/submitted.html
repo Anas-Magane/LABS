@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Ticket Submitted</title>
+  <style>
+    :root { --navy: #12122a; --surface: #1c1c3a; --text: #eaeaea; --text-dim: #9797c2; --border: rgba(255,255,255,0.08); }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--navy); color: var(--text); display: flex; align-items: center;
+           justify-content: center; min-height: 100vh; }
+    .box { background: var(--surface); border: 1px solid var(--border); padding: 2.2rem;
+           border-radius: 12px; width: 440px; text-align: center; }
+    h2 { font-size: 1.1rem; margin: 0 0 0.6rem; }
+    p { font-size: 0.85rem; color: var(--text-dim); }
+    a { color: #7fdbff; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Ticket #{{ ticket_id }} submitted</h2>
+    <p>Our IT staff will review it shortly.</p>
+    <p><a href="/">Back to Helpdesk</a></p>
+  </div>
+</body>
+</html>

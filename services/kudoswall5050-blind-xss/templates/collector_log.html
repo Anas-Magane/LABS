@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Collector Log</title>
+  <meta http-equiv="refresh" content="10">
+  <style>
+    :root { --bg: #16131f; --panel: #201c2e; --text: #f1eefc; --text-dim: #ab9fcf;
+            --accent: #ffb86b; --border: rgba(255,255,255,0.08); }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--bg); color: var(--text); }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    h2 { font-size: 1.1rem; }
+    p.hint { color: var(--text-dim); font-size: 0.8rem; }
+    .hit { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+           padding: 0.9rem 1.1rem; margin-bottom: 0.8rem; font-size: 0.82rem; }
+    .hit .time { color: var(--text-dim); font-size: 0.72rem; }
+    .hit .query { color: var(--accent); word-break: break-all; margin-top: 0.3rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Collector log</h2>
+    <p class="hint">Auto-refreshes every 10s.</p>
+    {% for h in hits %}
+    <div class="hit">
+      <div class="time">{{ h.time }} - from {{ h.remote_addr }} - {{ h.user_agent }}</div>
+      <div class="query">{{ h.query }}</div>
+    </div>
+    {% else %}
+    <p class="hint">No hits yet.</p>
+    {% endfor %}
+  </div>
+</body>
+</html>

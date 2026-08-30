@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlueOffice | Collector</title>
+  <style>
+    :root { --bg: #16131f; --panel: #201c2e; --text: #f1eefc; --text-dim: #ab9fcf;
+            --accent: #ffb86b; --border: rgba(255,255,255,0.08); }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--bg); color: var(--text); display: flex; align-items: center;
+           justify-content: center; min-height: 100vh; }
+    .box { background: var(--panel); border: 1px solid var(--border); padding: 2rem;
+           border-radius: 12px; width: 560px; }
+    h2 { font-size: 1.1rem; margin: 0 0 0.8rem; }
+    p { font-size: 0.85rem; color: var(--text-dim); }
+    code { display: block; background: var(--bg); border: 1px solid var(--border);
+           border-radius: 6px; padding: 0.6rem; font-size: 0.8rem; color: var(--accent);
+           word-break: break-all; margin: 0.4rem 0 1rem; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>New collector created</h2>
+    <p>Anything that hits the URL below gets logged. Point a payload's exfil request
+       at it (it needs no auth of its own - this token is the secret).</p>
+    <p>Hit URL (log a request):</p>
+    <code>/collector/{{ token }}/hit?...</code>
+    <p>Log (view captured hits):</p>
+    <code><a href="/collector/{{ token }}/log">/collector/{{ token }}/log</a></code>
+  </div>
+</body>
+</html>
