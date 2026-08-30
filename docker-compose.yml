@@ -399,6 +399,35 @@ services:
     pids_limit: 100
 
   # ---------------------------------------------------------------------------
+  # CHALLENGE 17 - ReactoShell: mass assignment privesc + real vm2 CVE RCE
+  # Player-facing port: 3001/tcp
+  # "Aramoon" student platform (register/login/dashboard/profile) with a
+  # staff-role-gated internal tool. Two chained bugs: (1) PATCH /api/profile
+  # does an unchecked Object.assign(user, body), letting any authenticated
+  # student set role:"staff" on themselves; (2) the now-reachable
+  # /staff/tools/reactoshell "component preview" runs snippets through the
+  # real, unmodified vm2 npm package pinned at 3.9.19 - genuinely vulnerable
+  # to the disclosed CVE-2023-37466 sandbox escape (CVSS 9.8), not a
+  # simulated one.
+  # ---------------------------------------------------------------------------
+  reactoshell3001-vmescape:
+    build:
+      context: ./services/reactoshell3001-vmescape
+    image: blueoffice/reactoshell3001-vmescape:latest
+    container_name: blueoffice-reactoshell3001
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    networks:
+      - net_reactoshell3001
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 100
+
+  # ---------------------------------------------------------------------------
   # CHALLENGE 16 - PostgreSQL Weak Credentials
   # Player-facing port: 5432/tcp
   # Official, multi-arch postgres:16 image (own Dockerfile only to bake in
@@ -478,6 +507,8 @@ networks:
   net_file_upload_bypass:
     driver: bridge
   net_postgres5432:
+    driver: bridge
+  net_reactoshell3001:
     driver: bridge
 
 # =============================================================================

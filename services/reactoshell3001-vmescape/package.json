@@ -1,0 +1,17 @@
+{
+  "name": "reactoshell3001-vmescape",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Aramoon - Student Space platform + internal ReactoShell staff tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vm2": "3.9.19"
+  }
+}

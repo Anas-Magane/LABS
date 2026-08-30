@@ -57,5 +57,6 @@ following rules apply for the duration of the engagement:
 | 4000 | TCP      | BlueOffice Report Generator |
 | 4500 | TCP      | BlueOffice ID Badge Photo Upload |
 | 5432 | TCP      | Database service |
+| 3001 | TCP      | Aramoon internal tools portal |
 
 Have fun, enumerate thoroughly, and good luck.
